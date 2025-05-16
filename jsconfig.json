@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": [ // 별칭 지정
+            "resources/js/*"  // 경로 지정
+            ]
+        },
+        "jsx": "preserve",
+    },
+        "exclude": [ // 제외할 목록
+        "node_modules",
+        "public"
+    ]
+}
