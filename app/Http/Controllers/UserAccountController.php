@@ -22,8 +22,6 @@ class UserAccountController extends Controller
         ]));
 
         // 계정 생성 후 로그인 페이지로 이동
-        Auth::login($user);
-
         return redirect()->route('login')
             ->with('success', 'Account created!');
     }
