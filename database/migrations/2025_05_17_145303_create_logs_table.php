@@ -17,7 +17,9 @@ return new class extends Migration
             $table->unsignedInteger('round')->default(1); // 회차정보
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('emoji', 4);
             $table->string('title');
+            $table->string('color')->nullable();
             $table->unsignedBigInteger('creator_id');
             $table->timestamps();
             $table->softDeletes();
