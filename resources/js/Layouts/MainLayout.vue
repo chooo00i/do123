@@ -2,18 +2,13 @@
     <header class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 w-full">
         <div class="container mx-auto">
             <nav class="p-4 flex items-center justify-between">
-                <div class="text-lg font-medium">
-                    Listings
-                </div>
-                <div class="text-xl text-indigo-600 dark:text-indigo-300 font-bold text-center">
-                    Title
+                <div class="text-lg font-medium"></div>
+                <div class="text-xl text-slate-600 dark:text-slate-300 font-bold text-center">
+                    Do 1 2 3
                 </div>
                 <!-- 로그인 했을 때 -->
                 <div v-if="user" class="flex items-center gap-4">
                     <Link class="tex-gray-500">{{ user.name }}</Link>
-                    <Link
-                        class="btn-primary">+ New Listing
-                    </Link>
                     <div>
                         <Link :href="route('logout')" method="delete" as="button">Logout</Link>
                     </div>

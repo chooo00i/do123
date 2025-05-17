@@ -7,7 +7,7 @@
                 <div v-if="form.errors.name" class="input-error">{{ form.errors.name }}</div>
             </div>
             <div class="mt-4">
-                <label for="email" class="label">E-mail (username)</label>
+                <label for="email" class="label">E-mail</label>
                 <input id="email" type="text" class="input" v-model="form.email" />
                 <div v-if="form.errors.email" class="input-error">{{ form.errors.email }}</div>
             </div>
