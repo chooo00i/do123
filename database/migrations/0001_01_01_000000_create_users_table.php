@@ -17,17 +17,19 @@ return new class extends Migration
             $table->string('email')->unique();
             // $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->rememberToken(); // 자동 로그인 관련
             $table->timestamps();
             $table->softDeletes();
         });
 
+        // 비밀번호 재설정 관련
         // Schema::create('password_reset_tokens', function (Blueprint $table) {
         //     $table->string('email')->primary();
         //     $table->string('token');
         //     $table->timestamp('created_at')->nullable();
         // });
 
+        // 사용자 로그인, 로그아웃 세션 관련
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
