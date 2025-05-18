@@ -23,9 +23,8 @@
 </template>
 
 <script setup>
-import { useForm, Link } from '@inertiajs/vue3';
+import { useForm, Link } from '@inertiajs/vue3'
 
-// form.errors.email
 const form = useForm({
     email: null,
     password: null,

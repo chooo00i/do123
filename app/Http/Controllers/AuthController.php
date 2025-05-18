@@ -25,7 +25,7 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate(); // 로그인 및 토큰 재생성
-        return redirect()->intended();
+        return redirect()->intended(route('home'));
     }
 
     // 로그아웃
