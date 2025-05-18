@@ -3,6 +3,7 @@ import { createInertiaApp } from '@inertiajs/vue3'
 import { ZiggyVue } from 'ziggy'
 import MainLayout from '@/Layouts/MainLayout.vue'
 import '../css/app.css'
+import 'flowbite'
 
 createInertiaApp({
     resolve: async (name) => {
