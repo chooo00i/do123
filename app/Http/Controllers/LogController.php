@@ -12,7 +12,7 @@ class LogController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('Log/Index');
     }
 
     /**

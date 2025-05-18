@@ -1,30 +1,53 @@
 <template>
-    <header class="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 w-full">
-        <div class="container mx-auto">
-            <nav class="p-4 flex items-center justify-between">
-                <div class="text-lg font-medium"></div>
-                <div class="text-xl text-slate-600 dark:text-slate-300 font-bold text-center">
-                    Do 1 2 3
+    <header>
+        <nav class="bg-white border-gray-200 dark:bg-gray-900">
+            <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+                <a href="" class="flex items-center space-x-3 rtl:space-x-reverse">
+                    <Link :href="route('home')" class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Do123</Link>
+                </a>
+                <button data-collapse-toggle="navbar-default" type="button"
+                    class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                    aria-controls="navbar-default" aria-expanded="false">
+                    <span class="sr-only">Open main menu</span>
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 17 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M1 1h15M1 7h15M1 13h15" />
+                    </svg>
+                </button>
+                <div class="hidden w-full md:block md:w-auto" id="navbar-default">
+                    <ul
+                        class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                        <!-- <li>
+                            <a href="#"
+                                class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
+                                aria-current="page">Home</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">About</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Services</a>
+                        </li>
+                        <li>
+                            <a href="#"
+                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Pricing</a>
+                        </li> -->
+                        <li v-if="user">
+                            <Link :href="route('logout')" method="delete" as="button"
+                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Logout</Link>
+                        </li>
+                    </ul>
                 </div>
-                <!-- 로그인 했을 때 -->
-                <div v-if="user" class="flex items-center gap-4">
-                    <Link class="tex-gray-500">{{ user.name }}</Link>
-                    <div>
-                        <Link :href="route('logout')" method="delete" as="button">Logout</Link>
-                    </div>
-                </div>
-                <!-- 로그인 하지 않았을 때 -->
-                <div v-else class="flex items-center gap-2">
-                    <Link :href="route('user-account.create')">Register</Link>
-                    <Link :href="route('login')">Sign-In</Link>
-                </div>
-            </nav>
-        </div>
+            </div>
+        </nav>
     </header>
-
     <main class="container mx-auto p-4 w-full">
         <div v-if="flashSuccess"
-            class="mb-4 border rounded-md shadow-sm border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900 p-2">
+            class="mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
+            role="alert">
             {{ flashSuccess }}
         </div>
         <slot>Default</slot>
@@ -41,10 +64,3 @@ const flashSuccess = computed(() =>
 )
 const user = computed(() => page.props.user)
 </script>
-
-<style scoped>
-.success {
-    background-color: green;
-    color: white;
-}
-</style>
