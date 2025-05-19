@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "@inertiajs/vue3": "^2.0.9",
+        "emoji-picker-element": "^1.26.3",
         "flowbite": "^3.1.2"
     }
 }

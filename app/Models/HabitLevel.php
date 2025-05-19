@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class HabitLevel extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['habit_id', 'level', 'seq', 'content'];
 
     public function habit()
     {

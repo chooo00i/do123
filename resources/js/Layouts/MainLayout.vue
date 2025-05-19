@@ -3,7 +3,8 @@
         <nav class="bg-white border-gray-200 dark:bg-gray-900">
             <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
                 <a href="" class="flex items-center space-x-3 rtl:space-x-reverse">
-                    <Link :href="route('home')" class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Do123</Link>
+                    <Link :href="route('home')"
+                        class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Do123</Link>
                 </a>
                 <button data-collapse-toggle="navbar-default" type="button"
                     class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -37,7 +38,8 @@
                         </li> -->
                         <li v-if="user">
                             <Link :href="route('logout')" method="delete" as="button"
-                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">Logout</Link>
+                                class="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                            Logout</Link>
                         </li>
                     </ul>
                 </div>
@@ -45,11 +47,13 @@
         </nav>
     </header>
     <main class="container mx-auto p-4 w-full">
-        <div v-if="flashSuccess"
+        <!-- <div v-if="flashSuccess"
             class="mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
             role="alert">
             {{ flashSuccess }}
-        </div>
+        </div> -->
+        <Alert v-if="flashSuccess" type="success" :message="flashSuccess" />
+        <Alert v-if="flashError" type="error" :message="flashError" />
         <slot>Default</slot>
     </main>
 </template>
@@ -57,10 +61,14 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
+import Alert from '@/Components/Alert.vue'
 
 const page = usePage()
 const flashSuccess = computed(() =>
     page.props.flash.success
+)
+const flashError = computed(() =>
+    page.props.flash.error
 )
 const user = computed(() => page.props.user)
 </script>

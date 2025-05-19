@@ -1,11 +1,11 @@
-import { defineConfig } from 'vite';
-import laravel from 'laravel-vite-plugin';
-import vue from '@vitejs/plugin-vue';
-import path from 'path';
+import { defineConfig } from "vite";
+import laravel from "laravel-vite-plugin";
+import vue from "@vitejs/plugin-vue";
+import path from "path";
 
 export default defineConfig({
     plugins: [
-        laravel(['resources/js/app.js']),
+        laravel(["resources/js/app.js"]),
         vue({
             template: {
                 transformAssetUrls: {
@@ -22,12 +22,15 @@ export default defineConfig({
                     // reference assets in the public directory as expected.
                     includeAbsolute: false,
                 },
+                compilerOptions: {
+                    isCustomElement: (tag) => tag === "emoji-picker",
+                },
             },
         }),
     ],
     resolve: {
         alias: {
             ziggy: path.resolve("vendor/tightenco/ziggy/dist/index.esm.js"),
-        }
-    }
+        },
+    },
 });

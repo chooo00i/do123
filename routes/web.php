@@ -22,4 +22,7 @@ Route::delete('logout', [AuthController::class, 'destroy'])->name('logout');
 Route::middleware('auth')->group(function () {
     // 홈(습관 기록)
     Route::get('/', [LogController::class, 'index'])->name('home');
+
+    // Habit
+    Route::post('habit', [LogController::class, 'store'])->name('habit.store');
 });
