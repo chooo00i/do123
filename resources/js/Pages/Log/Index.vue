@@ -3,7 +3,7 @@
         <!-- 탭 버튼 영역 -->
         <ul
             class="flex flex-wrap text-sm font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
-            <li class="me-2">
+            <!-- <li class="me-2">
                 <button @click="activeTab = 'tab1'" :class="[
                     'inline-block p-4 rounded-ss-lg hover:bg-gray-100 dark:hover:bg-gray-700',
                     activeTab === 'tab1' ? 'bg-gray-100 dark:hover:bg-gray-700' : ''
@@ -18,7 +18,7 @@
                 ]">
                     🏠
                 </button>
-            </li>
+            </li> -->
             <li class="me-2">
                 <button @click="activeTab = 'tab3'" :class="[
                     'inline-block p-4 rounded-ss-lg hover:bg-gray-100 dark:hover:bg-gray-700',
@@ -30,26 +30,8 @@
         </ul>
 
         <!-- 콘텐츠 영역 -->
-        <div v-if="activeTab === 'tab1'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800">
-            <h2 class="title-3xl">
-                🙇‍♀️ Powering innovation & trust
-            </h2>
-            <p class="mb-3 text-gray-500 dark:text-gray-400">
-                Empower Developers and business teams to collaborate at high velocity.
-            </p>
-        </div>
-        <div v-else-if="activeTab === 'tab2'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800">
-            <h2 class="title-3xl">
-                🏠 Powering innovation & trust
-            </h2>
-            <p class="mb-3 text-gray-500 dark:text-gray-400">
-                Empower Developers and business teams to collaborate at high velocity.
-            </p>
-        </div>
-        <div v-else-if="activeTab === 'tab3'" class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800">
-            <button @click="showModal = true" class="btn-primary">
-                Toggle modal
-            </button>
+        <div class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800">
+            <button @click="showModal = true" class="btn-primary">New Habit</button>
             <Modal :show="showModal" title="Add Habit" @close="showModal = false">
                 <!-- content -->
                 <template #default>
@@ -117,8 +99,8 @@
 <script setup>
 import { ref, reactive, computed } from 'vue'
 import { useForm, usePage } from '@inertiajs/vue3'
-import Modal from '@/Components/Modal.vue'
-import ToggleSwitch from '@/Components/ToggleSwitch.vue'
+import Modal from '@/Components/UI/Modal.vue'
+import ToggleSwitch from '@/Components/UI/ToggleSwitch.vue'
 
 const activeTab = ref('tab1')
 const showModal = ref(false)

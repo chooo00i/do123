@@ -56,7 +56,7 @@
 <script setup>
 import { Link, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
-import Alert from '@/Components/Alert.vue'
+import Alert from '@/Components/UI/Alert.vue'
 
 const page = usePage()
 const flashSuccess = computed(() =>
