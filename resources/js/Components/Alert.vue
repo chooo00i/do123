@@ -38,32 +38,15 @@ const props = defineProps({
         type: String,
         required: true,
     },
-    show: {
-        type: Boolean,
-        default: true,
-    }
 })
-
-const emit = defineEmits(['update:show'])
-
-const visible = ref(props.show)
-
-watch(() => props.show, (val) => {
-    visible.value = val
-})
-
-watch(visible, (val) => {
-    emit('update:show', val)
-})
+const visible = ref(true)
 
 const baseClass = "flex items-center p-4 mb-4 rounded-lg"
-
 const typeClasses = {
     success: "text-green-800 bg-green-50 dark:bg-gray-800 dark:text-green-400",
     error: "text-red-800 bg-red-50 dark:bg-gray-800 dark:text-red-400",
     warning: "text-yellow-800 bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300",
 }
-
 const closeButtonClasses = {
     success: "bg-green-50 text-green-500 hover:bg-green-200 dark:bg-gray-800 dark:text-green-400 dark:hover:bg-gray-700 focus:ring-green-400",
     error: "bg-red-50 text-red-500 hover:bg-red-200 dark:bg-gray-800 dark:text-red-400 dark:hover:bg-gray-700 focus:ring-red-400",
