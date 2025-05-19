@@ -47,11 +47,6 @@
         </nav>
     </header>
     <main class="container mx-auto p-4 w-full">
-        <!-- <div v-if="flashSuccess"
-            class="mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400"
-            role="alert">
-            {{ flashSuccess }}
-        </div> -->
         <Alert v-if="flashSuccess" type="success" :message="flashSuccess" />
         <Alert v-if="flashError" type="error" :message="flashError" />
         <slot>Default</slot>

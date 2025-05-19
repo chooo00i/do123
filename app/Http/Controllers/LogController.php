@@ -14,13 +14,7 @@ class LogController extends Controller
      */
     public function index()
     {
-        // return inertia('Log/Index');
-        return Inertia::render('Log/Index', [
-        'flash' => [
-            'success' => 'ㄹㄹㄹㄹ',
-            'error' => 'ddd'
-        ],
-    ]);
+        return inertia('Log/Index');
     }
 
     /**
@@ -54,7 +48,7 @@ class LogController extends Controller
                 'emoji' => $validated['emoji'],
                 'creator_id' => $user['id'],
                 'is_template' => $user->is_admin == true ? true : false,
-                'is_public' => $validated['is_public'] ?? false,
+                'is_public' => $validated['isPublic'] ?? false,
                 'levels' => $validated['levels'],
             ]);
             // 3. 성공 응답

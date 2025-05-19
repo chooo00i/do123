@@ -1,14 +1,14 @@
 <template>
-    <div v-if="show" tabindex="-1" aria-hidden="true"
+    <div v-if="show" tabindex="-1" role="dialog" aria-modal="true"
         class="fixed inset-0 z-50 flex justify-center items-center bg-black bg-opacity-50">
         <div class="relative p-4 w-full max-w-xl max-h-full">
             <!-- Modal content -->
             <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
                 <!-- Modal header -->
                 <div
-                    class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                    class="flex items-center justify-between pl-5 pr-5 pt-3 pb-3 border-b rounded-t dark:border-gray-600 border-gray-200">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white">
-                        Create New Product
+                        {{ title }}
                     </h3>
                     <button type="button" @click="emitClose"
                         class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
@@ -21,11 +21,11 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="overflow-y-auto max-h-[70vh]">
+                <div class="p-1 overflow-y-auto max-h-[70vh]">
                     <slot></slot>
                 </div>
                 <!-- Modal footer -->
-                <div class="flex items-center justify-between p-4 md:p-4 border-t rounded-t dark:border-gray-600 border-gray-200">
+                <div class="p-4 md:p-4 border-t rounded-t dark:border-gray-600 border-gray-200">
                     <slot name="footer">
                         <button class="btn-primary">Save</button>
                     </slot>
@@ -42,6 +42,10 @@ const props = defineProps({
     show: {
         type: Boolean,
         required: true,
+    },
+    title: {
+        type: String,
+        default: 'Modal'
     }
 })
 

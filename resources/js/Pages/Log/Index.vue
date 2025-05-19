@@ -50,7 +50,7 @@
             <button @click="showModal = true" class="btn-primary">
                 Toggle modal
             </button>
-            <Modal :show="showModal" @close="showModal = false">
+            <Modal :show="showModal" title="Add Habit" @close="showModal = false">
                 <!-- content -->
                 <template #default>
                     <form class="p-4">
@@ -60,8 +60,9 @@
                             <div class="flex flex-row gap-2">
                                 <div class="w-14 shrink-0 relative">
                                     <input id="emoji" type="text" class="input text-center cursor-pointer" maxlength="2"
-                                        :value="emoji" readonly @click="showEmojiPicker = !showEmojiPicker" />
-                                    <div v-if="showEmojiPicker" class="absolute z-50 top-full left-0">
+                                        v-model="form.emoji" readonly @click="showEmojiPicker = !showEmojiPicker" />
+                                    <div v-if="showEmojiPicker"
+                                        class="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                                         <emoji-picker @emoji-click="selectEmoji" />
                                     </div>
                                 </div>
@@ -103,7 +104,10 @@
                 </template>
                 <!-- footer 영역 -->
                 <template #footer>
-                    <button @click.prevent="save" class="btn-primary">Save</button>
+                    <div class="flex justify-between">
+                        <ToggleSwitch v-if="user?.is_admin == false" v-model="isPublic" label="Allow search" />
+                        <button @click.prevent="save" class="btn-primary">Save</button>
+                    </div>
                 </template>
             </Modal>
         </div>
@@ -111,22 +115,16 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useForm } from '@inertiajs/vue3'
+import { ref, reactive, computed } from 'vue'
+import { useForm, usePage } from '@inertiajs/vue3'
 import Modal from '@/Components/Modal.vue'
+import ToggleSwitch from '@/Components/ToggleSwitch.vue'
 
 const activeTab = ref('tab1')
 const showModal = ref(false)
-const emoji = ref('📚')
 
 // 모달 안 작동
-// input 추가 삭제 버튼 작동
-// const levels = reactive({
-//     1: [''],
-//     2: [''],
-//     3: ['']
-// })
-
+const isPublic = ref(false)
 const form = useForm({
     levels: {
         1: [''],
@@ -134,7 +132,8 @@ const form = useForm({
         3: ['']
     },
     title: null,
-    emoji: emoji.value,
+    emoji: '🎬',
+    isPublic: false,
 })
 
 function addInput(level) {
@@ -142,19 +141,20 @@ function addInput(level) {
         form.levels[level].push('')
     }
 }
-
 function removeInput(level) {
     if (form.levels[level].length > 1) {
         form.levels[level].pop()
     }
 }
 
+// admin 토글 숨기기
+const page = usePage()
+const user = computed(() => page.props.user)
+
 // 이모티콘 선택창 불러오기
 const showEmojiPicker = ref(false)
-
 function selectEmoji(event) {
-    emoji.value = event.detail.unicode
-    form.emoji = emoji.value
+    form.emoji = event.detail.unicode
     showEmojiPicker.value = false
 }
 
@@ -162,10 +162,7 @@ function selectEmoji(event) {
 const save = () => {
     form.post(route('habit.store'), {
         onSuccess: (res) => {
-            console.log(res.message)
-        },
-        onError: (errors) => {
-            console.warn('저장 실패', errors)
+
         },
         onFinish: () => {
             showModal.value = false
