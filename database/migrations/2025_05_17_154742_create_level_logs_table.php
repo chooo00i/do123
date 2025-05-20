@@ -18,7 +18,7 @@ return new class extends Migration
             $table->boolean('is_checked')->default(false);
             $table->date('log_date');
             $table->text('content')->nullable();
-            $table->text('memo');
+            $table->unsignedTinyInteger('level')->default(1);
             $table->unsignedTinyInteger('seq')->default(1);
             $table->timestamps();
             $table->softDeletes();

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('emoji', 4);
             $table->string('title');
             $table->string('color')->nullable();
+            $table->text('memo')->nullable();
             $table->unsignedBigInteger('creator_id');
             $table->timestamps();
             $table->softDeletes();
