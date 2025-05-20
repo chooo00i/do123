@@ -41,6 +41,12 @@ class Log extends Model
         return $models;
     }
 
+    /**
+     * log 저장 후 level_log 저장
+     * @param array $data   1. habit
+     *                      2. levels
+     * @return void
+     */
     public function addLogWithLevelLogs(array $data): void
     {
         // 1. Habit 저장
@@ -53,7 +59,7 @@ class Log extends Model
         $log->habit_id = $habit->id;
         $log->start_date = $today;
         $log->end_date = $today->copy()->addDays(20);
-        $log->round = $this->checkRound($habit['id']) + 1;
+        $log->round = $this->checkLastRound($habit['id']) + 1;
         $log->save();
 
         // 2. HabitLevel 저장
@@ -62,8 +68,9 @@ class Log extends Model
 
     /**
      * 습관 진행회차 확인
+     * 가장 최근 회차 정보를 가져옴
      */
-    public function checkRound(int $habitId): int
+    public function checkLastRound(int $habitId): int
     {
         $latestRound = DB::table('logs')
             ->where('habit_id', $habitId)

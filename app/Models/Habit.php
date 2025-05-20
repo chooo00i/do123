@@ -69,8 +69,11 @@ class Habit extends Model
             // Habits, Habit_levels 저장
             $habitData = $this->createWithLevels($data);
             
-            // Logs, level_logs 20일치 데이터 저장
-            (new Log)->addLogWithLevelLogs($habitData);
+            // admin이 생성하는 template는 log 생성하지 않음
+            if (!$data['is_template']) {
+                // Logs, level_logs 20일치 데이터 저장
+                (new Log)->addLogWithLevelLogs($habitData);
+            }
         });
     }
 }

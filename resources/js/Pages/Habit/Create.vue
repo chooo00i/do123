@@ -98,16 +98,15 @@ function selectEmoji(event) {
 }
 
 const save = () => {
-    const isEdit = !!habit?.id
-    const method = isEdit ? 'put' : 'post'
-    const url = isEdit ? route('habit.update', habit.id) : route('habit.store')
+    // const isEdit = !!habit?.id
+    // const url = isEdit ? route('log.store', habit.id) : route('habit.store')
 
-    form[method](url, {
+    form.post(route('habit.store'), {
         onSuccess: () => {
             route('home')
         },
         onFinish: () => {
-            if (!isEdit) form.reset()
+            form.reset()
         }
     })
 }
