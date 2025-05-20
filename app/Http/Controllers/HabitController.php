@@ -103,7 +103,7 @@ class HabitController extends Controller
         }
         // habitLevels
         $habitLevel = new HabitLevel();
-        $habitLevels = $habitLevel->selectHabitLevelsGroupByHabitId($habit->id);
+        $habitLevels = $habitLevel->selectHabitLevelsGroupByLevel($habit->id);
 
         return inertia(
             'Habit/Create',

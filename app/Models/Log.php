@@ -79,4 +79,14 @@ class Log extends Model
 
         return $latestRound ?? 0;
     }
+
+    public function selectCurrentLogsForUser(int $userId) : object {
+        $logs = DB::table('logs')
+            ->where('creator_id', $userId)
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->get();
+
+        return $logs;
+    }
 }

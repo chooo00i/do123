@@ -19,7 +19,7 @@ class HabitLevel extends Model
         return $this->hasMany(LevelLog::class);
     }
 
-    public function selectHabitLevelsGroupByHabitId(int $habitId): array
+    public function selectHabitLevelsGroupByLevel(int $habitId): array
     {
         $levels = DB::table('habit_levels')
             ->where('habit_id', $habitId)
