@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LevelLog extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['log_id', 'habit_level_id', 'level', 'seq', 'log_date'];
 
     public function log()
     {

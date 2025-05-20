@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Brick\Math\BigInteger;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +24,7 @@ class Habit extends Model
         return $this->hasMany(Log::class);
     }
 
-    public function addLevels(array $levels, int $habitId): void
+    public function addLevels(array $levels): array
     {
         $models = [];
         foreach ($levels as $level => $contents) {
@@ -39,9 +38,10 @@ class Habit extends Model
             }
         }
         $this->levels()->saveMany($models);
+        return $models;
     }
 
-    public static function createWithLevels(array $data): self
+    public function createWithLevels(array $data)
     {
         return DB::transaction(function () use ($data) {
             // 1. Habit 저장
@@ -52,12 +52,25 @@ class Habit extends Model
             $habit->is_public = $data['is_public'];
             $habit->is_template = $data['is_template'];
             $habit->save();
-            $habitId = $habit->id;
 
             // 2. HabitLevel 저장
-            $habit->addLevels($data['levels'], $habitId);
+            $levels = $habit->addLevels($data['levels']);
 
-            return $habit;
+            return [
+                'habit' => $habit,
+                'levels' => $levels,
+            ]; 
+        });
+    }
+
+    public function createWithLevelsAndLogs(array $data)
+    {
+        return DB::transaction(function () use ($data) {
+            // Habits, Habit_levels 저장
+            $habitData = $this->createWithLevels($data);
+            
+            // Logs, level_logs 20일치 데이터 저장
+            (new Log)->addLogWithLevelLogs($habitData);
         });
     }
 }

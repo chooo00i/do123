@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserAccountController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\HabitController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -24,5 +25,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [LogController::class, 'index'])->name('home');
 
     // Habit
-    Route::post('habit', [LogController::class, 'store'])->name('habit.store');
+    Route::resource('habit', HabitController::class)->only(['index', 'create', 'store']);
 });

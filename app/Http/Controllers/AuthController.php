@@ -20,7 +20,7 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]), true)) {
             throw ValidationException::withMessages([
-                'email' => 'Authentication failed',
+                'email' => '이메일이나 비밀번호가 맞지 않습니다.',
             ]);
         }
 

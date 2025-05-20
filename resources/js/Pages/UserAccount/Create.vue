@@ -1,8 +1,8 @@
 <template>
     <form @submit.prevent="register">
-        <div class="w-1/2 mx-auto">
+        <div class="md:w-1/2 mx-auto">
             <div>
-                <label for="name" class="label">Your Name</label>
+                <label for="name" class="label">이름</label>
                 <input id="name" type="text" class="input" v-model="form.name" />
                 <div v-if="form.errors.name" class="input-error">{{ form.errors.name }}</div>
             </div>
@@ -12,21 +12,17 @@
                 <div v-if="form.errors.email" class="input-error">{{ form.errors.email }}</div>
             </div>
             <div class="mt-4">
-                <label for="password" class="label">Password</label>
+                <label for="password" class="label">비밀번호</label>
                 <input id="password" type="password" class="input" v-model="form.password" />
                 <div v-if="form.errors.password" class="input-error">{{ form.errors.password }}</div>
             </div>
             <div class="mt-4">
-                <label for="password_confirmation" class="label">Password Confirmation</label>
+                <label for="password_confirmation" class="label">비밀번호 확인</label>
                 <input id="password_confirmation" type="password" class="input" v-model="form.password_confirmation" />
                 <div v-if="form.errors.password_confirmation" class="input-error">{{ form.errors.password_confirmation }}</div>
             </div>
             <div class="mt-4">
-                <button class="btn-primary w-full" type="submit">Create Account</button>
-                <div class="mt-2 text-center">
-                    <Link :href="route('login')" class="text-sm text-gray-500">Already have Account? Click here
-                    </Link>
-                </div>
+                <button class="btn-primary w-full" type="submit">회원가입</button>
             </div>
         </div>
     </form>

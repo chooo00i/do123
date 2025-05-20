@@ -23,6 +23,6 @@ class UserAccountController extends Controller
 
         // 계정 생성 후 로그인 페이지로 이동
         return redirect()->route('login')
-            ->with('success', 'Account created!');
+            ->with('success', '회원가입 완료!');
     }
 }

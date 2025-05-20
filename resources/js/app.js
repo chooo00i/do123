@@ -5,6 +5,7 @@ import MainLayout from "@/Layouts/MainLayout.vue";
 import "../css/app.css";
 import "flowbite";
 import "emoji-picker-element";
+import '@toast-ui/calendar/dist/toastui-calendar.min.css'
 
 createInertiaApp({
     resolve: async (name) => {
