@@ -56,6 +56,8 @@ import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
 import ToggleSwitch from '@/Components/UI/ToggleSwitch.vue'
 
+// todo 입력 글자수 막기
+
 const { user, habit, habitLevels } = defineProps({
     user: Object,
     habit: {

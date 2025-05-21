@@ -30,7 +30,7 @@
             </div>
         </nav>
     </header>
-    <main class="container mx-auto p-4 sm:p-8 w-full">
+    <main class="container mx-auto mt-2 sm:mt-6 p-4 sm:p-8 w-full">
         <Alert v-if="flashSuccess" type="success" :message="flashSuccess" />
         <Alert v-if="flashError" type="error" :message="flashError" />
         <slot>Default</slot>

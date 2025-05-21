@@ -4,7 +4,7 @@ namespace App\Traits;
 
 trait Helper
 {
-    public function groupBy(array $lists, string $groupKey): array
+    public function groupBy(mixed $lists, string $groupKey): array
     {
         $grouped = [];
 

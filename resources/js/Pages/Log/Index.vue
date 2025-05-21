@@ -3,23 +3,36 @@
         <!-- 탭 버튼 영역 -->
         <ul
             class="flex flex-wrap text-lg font-medium text-center text-gray-500 border-b border-gray-200 rounded-t-lg bg-gray-50 dark:border-gray-700 dark:text-gray-400 dark:bg-gray-800">
-            <li class="me-2">
-                <button v-for="log in logs" :key="log.id"
-                    class="inline-block p-4 rounded-ss-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+            <li class="me-2" v-for="(log, index) in logs" :key="log.id">
+                <button @click="selectLog(log)" :class="[
+                    'inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700',
+                    selectedLog?.id === log.id || (!selectedLog && index === 0)
+                        ? 'bg-gray-200 dark:bg-gray-700'
+                        : '',
+                    index == 0 ? 'rounded-ss-lg' : '',
+                ]">
                     {{ log.emoji }}
                 </button>
+            </li>
+            <li>
                 <Link :href="route('habit.index')"
-                    class='inline-block p-4 rounded-ss-lg hover:bg-gray-100 dark:hover:bg-gray-700'>
+                    class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700'>
                 +
                 </Link>
             </li>
+            <!-- <li class="ml-auto">
+                <Link :href="route('habit.edit')"
+                    class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-se-lg'>
+                ⚙️
+                </Link>
+            </li> -->
         </ul>
         <!-- 콘텐츠 영역 -->
         <div class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800">
-            <div v-if="logs" class="flex flex-col lg:flex-row gap-6 justify-between">
+            <div v-if="logs[0]" class="flex flex-col lg:flex-row gap-6 justify-between">
                 <div>
                     <h2 class="text-3xl font-extrabold dark:text-white mb-5">
-                        {{ logs[0].title }}
+                        {{ selectedLog ? selectedLog.title : logs[0].title }}
                     </h2>
                     <div class="flex-1">
                         <div class="flex flex-col gap-4">
@@ -43,25 +56,23 @@
                         </div>
                     </div>
                 </div>
+                <!-- 20일 체크 -->
                 <aside class="w-full lg:w-80">
                     <div class="grid grid-cols-5 gap-3">
-                        <template v-for="(lists, date) in levelLogData" :key="date">
-                            <div v-if="lists.status == 'unchecked'"
+                        <template v-for="(list, date) in levelLogData" :key="date">
+                            <div v-if="list.status == 'unchecked'"
                                 class="flex items-center justify-center rounded-full text-sm text-gray-800 dark:text-white h-12 w-12 text-center font-semibold border border-gray-200 dark:border-gray-700">
                                 {{ dayjs(date).format('MM/DD') }}</div>
-                            <button v-else
+                            <button v-else @click="openModal(date)"
                                 class="flex items-center justify-center rounded-full bg-sky-100 dark:bg-sky-600 text-sm text-sky-800 dark:text-white hover:bg-sky-200 dark:hover:bg-sky-700 h-12 w-12 text-center font-semibold">
-                                {{ lists.max_level ? 'Lv' + lists.max_level : 'skip' }}
+                                {{ list.max_level ? 'Lv' + list.max_level : 'skip' }}
                             </button>
                         </template>
-                        <!-- <button
-                            class="flex items-center justify-center rounded-full bg-sky-200 dark:bg-sky-700 text-sm text-sky-900 dark:text-white hover:bg-sky-300 dark:hover:bg-sky-800 h-12 w-12 text-center font-semibold">lv1</button>
-                        <button
-                            class="flex items-center justify-center rounded-full bg-sky-300 dark:bg-sky-800 text-sm text-sky-900 dark:text-white hover:bg-sky-400 dark:hover:bg-sky-900 h-12 w-12 text-center font-semibold">lv2</button>
-                        <button
-                            class="flex items-center justify-center rounded-full bg-sky-300 dark:bg-sky-800 text-sm text-sky-900 dark:text-white hover:bg-sky-400 dark:hover:bg-sky-900 h-12 w-12 text-center font-semibold">lv3</button> -->
                     </div>
                 </aside>
+                <Modal :show="showModal" :title="modalTitle" @close="showModal = false">
+                    <Edit :levelLogs="levelLogs" :showModal="showModal" />
+                </Modal>
             </div>
             <div v-else>
                 <h3 class="title-xl">👆 습관 만들기를 시작해보세요!</h3>
@@ -73,21 +84,52 @@
 </template>
 
 <script setup>
-// import { ref } from 'vue'
+import { ref } from 'vue'
 import { Link } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3'
 import dayjs from 'dayjs'
+import axios from 'axios'
+import Modal from '@/Components/UI/Modal.vue'
+import Edit from './Edit.vue'
 
-defineProps({
+const { logs, habitLevel, levelLogData, selectedLog } = defineProps({
     logs: Object,
     habitLevel: Object,
-    levelLogData: Array,
+    levelLogData: Object,
+    selectedLog: Object,
 })
 
-// const firstLog = logs[0]
-// const dates = ref([])
-// const start = dayjs(firstLog.start_date)
+const showModal = ref(false)
+const modalTitle = ref()
+const logId = ref(0)
+const levelLogs = ref(null)
 
-// for (let i = 0; i < 20; i++) {
-//     dates.value.push(dayjs(start).add(i, 'day').format('MM/DD'))
-// }
+// 모달을 열면서 해당 날짜 정보 전달
+const openModal = async (date) => {
+    const tabLogId = logId.value > 0 ? logId.value : selectedLog.id
+
+    try {
+        const response = await axios.get(route('level_logs.by_date', {
+            log_id: tabLogId,
+            date: date
+        }))
+
+        levelLogs.value = response.data
+        modalTitle.value = dayjs(date).format('M월 D일')
+        showModal.value = true
+    } catch (error) {
+        console.error('데이터 불러오기 실패:', error)
+    }
+}
+
+// 탭을 눌렀을 때 작동
+const selectLog = (log) => {
+    logId.value = log.id
+    router.visit(route('home', { log_id: log.id }), {
+        preserveScroll: true,
+        preserveState: true, // 상태 유지 (모달 등)
+        only: ['habitLevel', 'levelLogData', 'selectedLog'], // 이 값들만 서버에서 받아옴
+    })
+}
+
 </script>

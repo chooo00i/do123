@@ -13,7 +13,7 @@ class LogController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($logId = null)
     {
         $user = auth()->user();
 
@@ -21,39 +21,26 @@ class LogController extends Controller
         $logs = new Log();
         $currentLogs = $logs->selectCurrentLogsForUser($user->id);
 
-        $firstLog = $currentLogs[0];
-        // 첫번째 로그 habit_level 정보
-        $habitLevel = (new HabitLevel())->selectHabitLevelsGroupByLevel($firstLog->habit_id);
+        $selectedLog = $logId
+            ? $currentLogs->firstWhere('id', $logId)
+            : $currentLogs->first();
 
-        // 첫번째 로그 20일 정보
-        $levelLogGroup = (new LevelLog())->selectLevelLogsGroupByDate($firstLog->id);
-        $levelLogData = [];
-        $today = now()->toDateString();
-        foreach ($levelLogGroup as $date => $logs) {
-            // 지난 날짜면 상태 skip으로 기록
-            if ($date < $today) {
-                $levelLogData[$date]['status'] = 'skip';
-                continue;
-            } elseif ($date > $today) {
-                $levelLogData[$date]['status'] = 'unchecked';
-                continue;
-            }
+        $habitLevel = null;
+        $levelLogData = null;
 
-            $levels = [];
-
-            foreach ($logs as $log) {
-                if (!empty($log->is_checked)) {
-                    $levels[] = $log->level;
-                }
-            }
-
-            $levelLogData[$date]['max_level'] = $levels ? max($levels) : null;
+        if ($selectedLog) {
+            //  첫번째 로그 habit_level 정보
+            $habitLevel = (new HabitLevel())->selectHabitLevelsGroupByLevel($selectedLog->habit_id);
+    
+            // 첫번째 로그 20일 정보
+            $levelLogData = (new LevelLog())->getLevelLogData($selectedLog->id);
         }
 
         return inertia('Log/Index', [
             'logs' => $currentLogs,
             'habitLevel' => $habitLevel,
             'levelLogData' => $levelLogData,
+            'selectedLog' => $selectedLog,
         ]);
     }
 

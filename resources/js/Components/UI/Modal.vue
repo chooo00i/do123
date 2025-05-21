@@ -24,12 +24,6 @@
                 <div class="p-1 overflow-y-auto max-h-[70vh]">
                     <slot></slot>
                 </div>
-                <!-- Modal footer -->
-                <div class="p-4 md:p-4 border-t rounded-t dark:border-gray-600 border-gray-200">
-                    <slot name="footer">
-                        <button class="btn-primary">Save</button>
-                    </slot>
-                </div>
             </div>
         </div>
     </div>

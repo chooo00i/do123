@@ -31,6 +31,7 @@ class Log extends Model
             foreach ($levels as $habit_level) {
                 $models[] = new LevelLog([
                     'habit_level_id' => $habit_level->id,
+                    'content' => $habit_level->content,
                     'level' => $habit_level->level,
                     'seq' => $habit_level->seq,
                     'log_date' => $today->copy()->addDays($i),
