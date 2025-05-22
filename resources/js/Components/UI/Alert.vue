@@ -4,8 +4,7 @@
         typeClasses[type] || typeClasses.success
     ]" role="alert">
         <slot name="icon">
-            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg">
+            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
             </svg>
@@ -40,6 +39,10 @@ const props = defineProps({
     },
 })
 const visible = ref(true)
+
+watch(() => props.message, () => {
+    visible.value = true;
+});
 
 const baseClass = "flex items-center p-4 mb-4 rounded-lg"
 const typeClasses = {

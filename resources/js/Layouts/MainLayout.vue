@@ -31,8 +31,8 @@
         </nav>
     </header>
     <main class="container mx-auto mt-2 sm:mt-6 p-4 sm:p-8 w-full">
-        <Alert v-if="flashSuccess" type="success" :message="flashSuccess" />
-        <Alert v-if="flashError" type="error" :message="flashError" />
+        <Alert v-if="flashSuccess" type="success" :message="flashSuccess" :key="flashSuccess + String(Date.now())" />
+        <Alert v-if="flashError" type="error" :message="flashError" :key="flashSuccess + String(Date.now())" />
         <slot>Default</slot>
     </main>
 </template>
