@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Habit;
 use App\Models\HabitLevel;
+use App\Models\Log;
 use Illuminate\Http\Request;
 use App\Http\Requests\HabitRequest;
 
@@ -43,7 +44,12 @@ class HabitController extends Controller
             $user = auth()->user();
             $isAdmin = $user->is_admin;
 
-            // todo 인당 진행중인 습관 최대 3개 제한 추가
+            // 진행중인 습관 최대 3개 제한
+            $logs = new Log();
+            $currentLogs = $logs->selectCurrentLogsForUser($user->id);
+            if ($logs->count() >= 3) {
+                return redirect()->route('home')->with('error', '3개 이상 습관을 진행할 수 없습니다.');
+            }
 
             $habit = new Habit();
             // habits, habit_levels, logs, level_logs 한번에 초기 생성

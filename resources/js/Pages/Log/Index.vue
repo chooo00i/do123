@@ -15,9 +15,9 @@
                 </button>
             </li>
             <li>
-                <Link :href="route('habit.index')" class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700'>
+                <button @click.prevent="newHabit()" class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700'>
                 +
-                </Link>
+                </button>
             </li>
             <li class="ml-auto">
                 <Link :href="route('habit.edit', {
@@ -134,6 +134,14 @@ const selectLog = (log) => {
         preserveState: true, // 상태 유지 (모달 등)
         only: ['habitLevel', 'levelLogData', 'selectedLog'], // 이 값들만 서버에서 받아옴
     })
+}
+
+const newHabit = () => {
+    if (logs.length >= 3) {
+        alert('3개 이상 습관을 진행할 수 없습니다.')
+        return
+    } 
+    route('habit.index')
 }
 
 </script>
