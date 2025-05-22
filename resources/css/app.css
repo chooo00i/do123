@@ -34,7 +34,7 @@
     }
 
     .btn-outline {
-        @apply p-2 rounded-md border shadow-sm border-gray-300 dark:border-gray-800 hover:border-gray-400 hover:bg-gray-50 dark:hover:border-gray-700 dark:hover:bg-gray-800
+        @apply font-medium p-2 rounded-lg text-sm px-5 py-2.5 text-center rounded-md border shadow-sm border-gray-300 dark:border-gray-800 hover:border-gray-400 hover:bg-gray-50 dark:hover:border-gray-700 dark:hover:bg-gray-800
     }
 
     .btn-green-to-blue {

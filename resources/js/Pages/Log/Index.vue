@@ -15,17 +15,18 @@
                 </button>
             </li>
             <li>
-                <Link :href="route('habit.index')"
-                    class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700'>
+                <Link :href="route('habit.index')" class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700'>
                 +
                 </Link>
             </li>
-            <!-- <li class="ml-auto">
-                <Link :href="route('habit.edit')"
-                    class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-se-lg'>
+            <li class="ml-auto">
+                <Link :href="route('habit.edit', {
+                    habit: selectedLog.habit_id,
+                    log_id: selectedLog.id
+                },)" class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-se-lg'>
                 ⚙️
                 </Link>
-            </li> -->
+            </li>
         </ul>
         <!-- 콘텐츠 영역 -->
         <div class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800">
@@ -48,7 +49,8 @@
                                     </p>
                                     <p class="text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
                                         <span v-for="(data, index) in habitLevel[level]" :key="data">
-                                            {{ data }}<span v-if="index < habitLevel[level].length - 1"> · </span>
+                                            {{ data.content }}<span v-if="index < habitLevel[level].length - 1"> ·
+                                            </span>
                                         </span>
                                     </p>
                                 </div>
@@ -91,6 +93,8 @@ import dayjs from 'dayjs'
 import axios from 'axios'
 import Modal from '@/Components/UI/Modal.vue'
 import Edit from './Edit.vue'
+
+
 
 const { logs, habitLevel, levelLogData, selectedLog } = defineProps({
     logs: Object,

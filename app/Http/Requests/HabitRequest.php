@@ -26,7 +26,7 @@ class HabitRequest extends FormRequest
             'emoji' => 'required|string|max:10',
             'levels' => 'required|array',
             'levels.*' => 'array|max:3',
-            'levels.*.*' => 'required|string|max:255',
+            'levels.*.*.content' => 'required|string|max:255',
         ];
     }
 }

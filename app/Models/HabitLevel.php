@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class HabitLevel extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = ['habit_id', 'level', 'seq', 'content'];
 
     public function habit()
@@ -21,8 +24,7 @@ class HabitLevel extends Model
 
     public function selectHabitLevelsGroupByLevel(int $habitId): array
     {
-        $levels = DB::table('habit_levels')
-            ->where('habit_id', $habitId)
+        $levels = HabitLevel::where('habit_id', $habitId)
             ->orderBy('level')
             ->orderBy('seq')
             ->get();
@@ -31,7 +33,7 @@ class HabitLevel extends Model
 
         foreach ($levels as $level) {
             if (isset($grouped[$level->level])) {
-                $grouped[$level->level][] = $level->content;
+                $grouped[$level->level][] = $level;
             }
         }
 

@@ -29,8 +29,7 @@ class LevelLog extends Model
      */
     public function selectLevelLogsGroupByDate(int $logId): array
     {
-        $levels = DB::table('level_logs')
-            ->where('log_id', $logId)
+        $levels = LevelLog::where('log_id', $logId)
             ->orderBy('log_date')
             ->orderBy('level')
             ->orderBy('seq')
@@ -46,11 +45,8 @@ class LevelLog extends Model
         $levelLogData = [];
         $today = now()->toDateString();
         foreach ($levelLogGroup as $date => $logs) {
-            // 지난 날짜면 상태 skip으로 기록
-            if ($date < $today) {
-                $levelLogData[$date]['status'] = 'skip';
-                continue;
-            } elseif ($date > $today) {
+            // 오늘 기준 이후 날짜는 다른 상태로 기록 -> 체크 불가
+            if ($date > $today) {
                 $levelLogData[$date]['status'] = 'unchecked';
                 continue;
             }
@@ -58,8 +54,8 @@ class LevelLog extends Model
             $levels = [];
 
             foreach ($logs as $log) {
-                if (!empty($log->is_checked)) {
-                    $levels[] = $log->level;
+                if ($log['is_checked']) {
+                    $levels[] = $log['level'];
                 }
             }
 

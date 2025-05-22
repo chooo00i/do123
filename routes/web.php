@@ -28,8 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [LogController::class, 'index'])->name('root');
     
     // Habit
-    Route::resource('habit', HabitController::class)->only(['index', 'create', 'store', 'edit', 'update']);
-    Route::get('/habit/{habit}/copy', [HabitController::class, 'copy'])->name('habit.copy');
+    Route::resource('habit', HabitController::class)->only(['index', 'create', 'store', 'update']);
+    Route::get('/habit/edit/{habit}/{log_id}', [HabitController::class, 'edit'])->name('habit.edit');
+    Route::get('/habit/copy/{habit}', [HabitController::class, 'copy'])->name('habit.copy');
     
     // LevelLog
     // Route::resource('level-log', LevelLogController::class)->only(['update']);

@@ -27,6 +27,9 @@ class HabitController extends Controller
     {
         return inertia(
             'Habit/Create',
+            [
+                'type' => 'create'
+            ]
         );
     }
 
@@ -40,7 +43,7 @@ class HabitController extends Controller
             $user = auth()->user();
             $isAdmin = $user->is_admin;
 
-            // todo 인당 진행중인 습관 최대 5개 제한 추가
+            // todo 인당 진행중인 습관 최대 3개 제한 추가
 
             $habit = new Habit();
             // habits, habit_levels, logs, level_logs 한번에 초기 생성
@@ -71,17 +74,39 @@ class HabitController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Habit $habit)
+    public function edit(Habit $habit, int $logId)
     {
-        //
+        // habitLevels
+        $habitLevel = new HabitLevel();
+        $habitLevels = $habitLevel->selectHabitLevelsGroupByLevel($habit->id);
+
+        return inertia(
+            'Habit/Create',
+            [
+                'habit' => $habit,
+                'habitLevels' => $habitLevels,
+                'type' => 'edit',
+                'logId' => $logId,
+            ]
+        );
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Habit $habit)
+    public function update(HabitRequest $request, Habit $habit)
     {
-        //
+        // habits, habit_levels, logs, level_logs 한번에 업데이트
+        $habit->updateWithLevelsAndLogs([
+            'title' => $request['title'],
+            'emoji' => $request['emoji'],
+            'is_public' => $request['isPublic'] ?? false,
+            'levels' => $request['levels'],
+            'removedLevelIds' => $request['removedLevelIds'],
+            'logId' => $request['logId'],
+        ], $habit);
+
+        return redirect()->route('home', $request['logId'])->with('success', '습관 수정 완료!');
     }
 
     /**
@@ -110,6 +135,7 @@ class HabitController extends Controller
             [
                 'habit' => $habit,
                 'habitLevels' => $habitLevels,
+                'type' => 'copy',
             ]
         );
     }
