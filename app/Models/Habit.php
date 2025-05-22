@@ -169,7 +169,7 @@ class Habit extends Model
     }
 
     /**
-     * 제거 대상으로 표시된 HabitLevels 및 관련 LevelLogs 삭제.
+     * 제거 대상으로 표시된 HabitLevels 및 관련 LevelLogs(완전 삭제) 삭제.
      */
     protected function deleteRemovedLevels(array $data): void
     {
