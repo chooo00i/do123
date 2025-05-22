@@ -87,50 +87,97 @@ class Habit extends Model
             Habit::where('id', $habit->id)->update(['title' => $data['title'], 'emoji' => $data['emoji']]);
 
             // 2. 하위 log 업데이트
-            DB::table('logs')->where('habit_id', $habit->id)->update(['title' => $data['title'], 'emoji' => $data['emoji']]);
+            Log::where('habit_id', $habit->id)->update(['title' => $data['title'], 'emoji' => $data['emoji']]);
 
-            // 3. habitLevels 및 levelLogs 업데이트 혹은 삭제
-            $selectedRoundLog = DB::table('logs')->where('id', $data['logId'])->firstOrFail();
-            $startDate = $selectedRoundLog->start_date;
-            foreach ($data['levels'] as $levelList) {
-                foreach ($levelList as $list) {
-                    if (is_null($list['id'])) {
-                        // 생성
-                        $habitLevelId = DB::table('habit_levels')->insertGetId([
-                            'habit_id' => $habit->id,
-                            'content' => $list['content'],
-                            'level' => $list['level'],
-                            'seq' => $list['seq'],
-                            'created_at' => now(),
-                            'updated_at' => now(),
-                        ]);
+            // 3. HabitLevels 및 LevelLogs 처리
+            $this->processHabitLevelsAndLogs($habit->id, $data);
 
-                        for ($i = 0; $i < 20; $i++) {
-                            LevelLog::insert([
-                                'log_id' => $data['logId'],
-                                'habit_level_id' => $habitLevelId,
-                                'content' => $list['content'],
-                                'level' => $list['level'],
-                                'seq' => $list['seq'],
-                                'log_date' => Carbon::parse($startDate)->addDays($i),
-                                'created_at' => now(),
-                                'updated_at' => now(),
-                            ]);
-                        }
-                    } else if (!in_array($list['id'], $data['removedLevelIds'])) {
-                        // 수정
-                        HabitLevel::where('id', $list['id'])->update(['content' => $list['content']]);
-                        LevelLog::where(['habit_level_id' => $list['id']], ['log_id' => $data['logId']])
-                            ->update(['content' => $list['content']]);
-                    }
+            // 4. 삭제된 HabitLevels 및 관련 LevelLogs 처리
+            $this->deleteRemovedLevels($data);
+        });
+    }
+
+    /**
+     * HabitLevels 및 관련 LevelLogs를 생성하거나 업데이트.
+     */
+    protected function processHabitLevelsAndLogs(int $habitId, array $data): void
+    {
+        // $data['logId']로 Log를 가져오거나, Log 모델 인스턴스를 직접 전달받는 것도 고려
+        $selectedLog = Log::findOrFail($data['logId']); // Log 모델 사용 예시
+        // $selectedRoundLog = DB::table('logs')->where('id', $data['logId'])->firstOrFail(); // 기존 코드
+        $startDate = Carbon::parse($selectedLog->start_date);
+
+        foreach ($data['levels'] as $levelGroup) { // $levelList -> $levelGroup으로 변수명 변경
+            foreach ($levelGroup as $levelData) { // $list -> $levelData으로 변수명 변경
+                // 삭제 대상이 아닌 경우에만 생성 또는 수정 로직 실행
+                if (isset($levelData['id']) && in_array($levelData['id'], $data['removedLevelIds'] ?? [])) {
+                    continue; // 삭제 대상이면 건너뛰기
+                }
+
+                if (is_null($levelData['id'])) {
+                    // 생성 로직
+                    $this->createHabitLevelAndLogs($habitId, $selectedLog->id, $levelData, $startDate);
+                } else {
+                    // 수정 로직 (삭제 대상이 아닌 경우)
+                    $this->updateHabitLevelAndLogs($selectedLog->id, $levelData);
                 }
             }
+        }
+    }
 
-            // 삭제
-            if (!empty($data['removedLevelIds'])) {
-                HabitLevel::whereIn('id', $data['removedLevelIds'])->delete();
-                LevelLog::where('log_id', $data['logId'])->whereIn('habit_level_id', $data['removedLevelIds'])->delete();
-            }
-        });
+    /**
+     * 새로운 HabitLevel과 관련 LevelLog 생성.
+     */
+    protected function createHabitLevelAndLogs(int $habitId, int $logId, array $levelData, Carbon $startDate): void
+    {
+        $habitLevel = HabitLevel::create([
+            'habit_id' => $habitId,
+            'content' => $levelData['content'],
+            'level' => $levelData['level'],
+            'seq' => $levelData['seq'],
+        ]);
+
+        $levelLogsData = [];
+        for ($i = 0; $i < 20; $i++) {
+            $levelLogsData[] = [
+                'log_id' => $logId,
+                'habit_level_id' => $habitLevel->id,
+                'content' => $levelData['content'],
+                'level' => $levelData['level'],
+                'seq' => $levelData['seq'],
+                'log_date' => $startDate->copy()->addDays($i)->toDateString(), // toDateString() 등으로 포맷팅
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        LevelLog::insert($levelLogsData); // 대량 삽입
+    }
+
+    /**
+     * 기존 HabitLevel과 관련 LevelLog 업데이트.
+     */
+    protected function updateHabitLevelAndLogs(int $logId, array $levelData): void
+    {
+        $habitLevel = HabitLevel::find($levelData['id']);
+        if ($habitLevel) {
+            $habitLevel->update(['content' => $levelData['content']]);
+
+            LevelLog::where('habit_level_id', $levelData['id'])
+                ->where('log_id', $logId)
+                ->update(['content' => $levelData['content']]);
+        }
+    }
+
+    /**
+     * 제거 대상으로 표시된 HabitLevels 및 관련 LevelLogs 삭제.
+     */
+    protected function deleteRemovedLevels(array $data): void
+    {
+        if (isset($data['removedLevelIds']) && !empty($data['removedLevelIds'])) {
+            HabitLevel::whereIn('id', $data['removedLevelIds'])->delete();
+            LevelLog::where('log_id', $data['logId'])
+                ->whereIn('habit_level_id', $data['removedLevelIds'])
+                ->delete();
+        }
     }
 }
