@@ -19,10 +19,10 @@
                 +
                 </button>
             </li>
-            <li class="ml-auto">
+            <li class="ml-auto" v-if="selectedLog">
                 <Link :href="route('habit.edit', {
-                    habit: selectedLog.habit_id,
-                    log_id: selectedLog.id
+                    habit: selectedLog?.habit_id,
+                    log_id: selectedLog?.id
                 },)" class='inline-block p-4 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-se-lg'>
                 ⚙️
                 </Link>

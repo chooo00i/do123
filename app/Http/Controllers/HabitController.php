@@ -7,9 +7,11 @@ use App\Models\HabitLevel;
 use App\Models\Log;
 use Illuminate\Http\Request;
 use App\Http\Requests\HabitRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class HabitController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -82,6 +84,8 @@ class HabitController extends Controller
      */
     public function edit(Habit $habit, int $logId)
     {
+        $this->authorize('update', $habit);
+
         // habitLevels
         $habitLevel = new HabitLevel();
         $habitLevels = $habitLevel->selectHabitLevelsGroupByLevel($habit->id);
