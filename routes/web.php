@@ -23,7 +23,7 @@ Route::delete('logout', [AuthController::class, 'destroy'])->name('logout');
 // 로그인 필요
 Route::middleware('auth')->group(function () {
     // 홈(습관 기록)
-    Route::resource('log', LogController::class)->only(['store']);
+    Route::resource('log', LogController::class)->only(['store', 'destroy']);
     Route::get('home/{log_id?}', [LogController::class, 'index'])->name('home');
     Route::get('/', [LogController::class, 'index'])->name('root');
     
@@ -34,6 +34,6 @@ Route::middleware('auth')->group(function () {
     
     // LevelLog
     // Route::resource('level-log', LevelLogController::class)->only(['update']);
-    Route::patch('level-log/check', [LevelLogController::class, 'check'])->name('level_log.check');
-    Route::get('/habits/{log_id}/level-logs/{date}', [LevelLogController::class, 'byDate'])->name('level_logs.by_date');
+    Route::patch('level-logs/check', [LevelLogController::class, 'check'])->name('level_log.check');
+    Route::get('/level-logs/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_logs.by_date');
 });

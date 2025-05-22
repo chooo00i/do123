@@ -47,7 +47,7 @@
             </div>
             <div class="flex justify-end">
                 <!-- <ToggleSwitch v-if="user && !user.is_admin" v-model="form.isPublic" label="검색 허용" /> -->
-                <button v-if="type === 'edit'" class="btn-outline me-2">습관 중지</button>
+                <button v-if="type === 'edit'" @click.prevent="stop" class="btn-outline me-2">습관 중지</button>
                 <button @click.prevent="save" class="btn-primary">저장</button>
             </div>
         </form>
@@ -57,6 +57,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
+import { router } from '@inertiajs/vue3';
 import ToggleSwitch from '@/Components/UI/ToggleSwitch.vue'
 
 const { user, habit, habitLevels, type, logId } = defineProps({
@@ -126,11 +127,17 @@ const save = () => {
     }
 
     if (type === 'edit') {
-        if (confirm('이전 내용 기록은 수정되지 않습니다. 수정하시겠습니까?')) {
+        if (confirm('이전 회차 기록은 수정되지 않습니다. 수정하시겠습니까?')) {
             form.put(route('habit.update', habit.id))
         }
     } else {
         form.post(route('habit.store'))
     }
 }
+
+const stop = () => {
+    if (confirm('중지하시겠습니까?')) {
+        router.delete(route('log.destroy', logId))
+    }
+};
 </script>

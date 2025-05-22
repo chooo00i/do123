@@ -76,8 +76,7 @@ class Log extends Model
      */
     public function checkLastRound(int $habitId): int
     {
-        $latestRound = DB::table('logs')
-            ->where('habit_id', $habitId)
+        $latestRound = Log::where('habit_id', $habitId)
             ->orderByDesc('round')
             ->value('round');
 
@@ -85,8 +84,7 @@ class Log extends Model
     }
 
     public function selectCurrentLogsForUser(int $userId) : object {
-        $logs = DB::table('logs')
-            ->where('creator_id', $userId)
+        $logs = Log::where('creator_id', $userId)
             ->whereDate('start_date', '<=', now())
             ->whereDate('end_date', '>=', now())
             ->get();

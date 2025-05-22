@@ -89,7 +89,7 @@ class Habit extends Model
             // 2. 하위 log 업데이트
             DB::table('logs')->where('habit_id', $habit->id)->update(['title' => $data['title'], 'emoji' => $data['emoji']]);
 
-            // 2. habitLevels 업데이트 혹은 삭제
+            // 3. habitLevels 및 levelLogs 업데이트 혹은 삭제
             $selectedRoundLog = DB::table('logs')->where('id', $data['logId'])->firstOrFail();
             $startDate = $selectedRoundLog->start_date;
             foreach ($data['levels'] as $levelList) {

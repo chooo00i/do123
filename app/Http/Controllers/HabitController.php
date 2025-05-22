@@ -118,7 +118,7 @@ class HabitController extends Controller
     }
 
     /**
-     * 습관 복사(템플릿)
+     * 습관 복사(템플릿) 이동
      */
     public function copy(Habit $habit)
     {

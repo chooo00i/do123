@@ -31,7 +31,7 @@ class LogController extends Controller
         if ($selectedLog) {
             //  첫번째 로그 habit_level 정보
             $habitLevel = (new HabitLevel())->selectHabitLevelsGroupByLevel($selectedLog->habit_id);
-    
+
             // 첫번째 로그 20일 정보
             $levelLogData = (new LevelLog())->getLevelLogData($selectedLog->id);
         }
@@ -85,10 +85,26 @@ class LogController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 로그 중지
      */
     public function destroy(Log $log)
     {
-        //
+        // Log, LevelLog 정보 삭제
+        Log::where('id', $log->id)->delete();
+        LevelLog::where('log_id', $log->id)->delete();
+
+        // 로그 회차 업데이트
+        $logs = Log::where('habit_id', $log->habit_id)
+            ->whereNot('id', $log->id)
+            ->orderBy('round')->get();
+        if ($logs->isNotEmpty()) {
+            $round = 1;
+            foreach ($logs as $logItem) {
+                $logItem->round = $round++;
+                $logItem->save();
+            }
+        }
+        
+        return route('home');
     }
 }
