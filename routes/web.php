@@ -26,14 +26,18 @@ Route::middleware('auth')->group(function () {
     Route::resource('log', LogController::class)->only(['store', 'destroy']);
     Route::get('home/{log?}', [LogController::class, 'index'])->name('home');
     Route::get('/', [LogController::class, 'index'])->name('root');
+    // Route::get('level-logs/statistics', [LogController::class, 'showStatistics'])->name(name: 'level_logs.statistics');
     
     // Habit
     Route::resource('habit', HabitController::class)->only(['index', 'create', 'store', 'update']);
-    Route::get('/habit/edit/{habit}/{log_id}', [HabitController::class, 'edit'])->name('habit.edit');
-    Route::get('/habit/copy/{habit}', [HabitController::class, 'copy'])->name('habit.copy');
+    Route::get('habit/edit/{habit}/{log_id}', [HabitController::class, 'edit'])->name('habit.edit');
+    Route::get('habit/copy/{habit}', [HabitController::class, 'copy'])->name('habit.copy');
     
     // LevelLog
-    // Route::resource('level-log', LevelLogController::class)->only(['update']);
     Route::patch('level-logs/check', [LevelLogController::class, 'check'])->name('level_log.check');
-    Route::get('/level-logs/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_logs.by_date');
+    Route::get('level-logs/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_logs.by_date');
+
+    // 마이페이지
+    Route::get('user-account/{user}', [UserAccountController::class, 'edit'])->name('user-account.edit');
+    Route::put('user-account', [UserAccountController::class, 'update'])->name('user-account.update');
 });

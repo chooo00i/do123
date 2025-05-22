@@ -21,7 +21,7 @@
                         class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                         <li v-for="(menu, index) in menus" :key="index">
                             <Link :href="menu.href" :method="menu.method" :as="menu.as"
-                                class="block py-2 px-3 text-bold text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
+                                class="block py-2 px-3 text-extrabold text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-sky-700 md:p-0 dark:text-white md:dark:hover:text-sky-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent">
                             {{ menu.label }}
                             </Link>
                         </li>
@@ -54,17 +54,15 @@ const user = computed(() => page.props.user)
 const menus = computed(() => {
     if (!user.value) {
         return [
-            // { label: 'Calendar' },
             // { label: 'Overview' },
-            // { label: 'My Page' },
+            // { label: 'My Page', href: route('user-account.edit') },
             { label: 'Login', href: route('login') },
         ]
     }
 
     return [
-        // { label: 'Calendar' },
-        // { label: 'Overview' },
-        // { label: 'My Page' },
+        // { label: 'Overview'  },
+        { label: 'My Page', href: route('user-account.edit', user.value.id) },
         { label: 'Logout', href: route('logout'), method: 'delete', as: 'button' },
     ]
 })

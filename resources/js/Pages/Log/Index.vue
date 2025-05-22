@@ -60,14 +60,21 @@
                 </div>
                 <!-- 20일 체크 -->
                 <aside class="w-full lg:w-80">
-                    <div class="grid grid-cols-5 gap-3">
+                    <div class="grid grid-cols-5 gap-1">
                         <template v-for="(list, date) in levelLogData" :key="date">
                             <div v-if="list.status == 'unchecked'"
-                                class="flex items-center justify-center rounded-full text-sm text-gray-800 dark:text-white h-12 w-12 text-center font-semibold border border-gray-200 dark:border-gray-700">
+                                class="flex items-center justify-center rounded-full text-sm text-gray-800 dark:text-white h-14 w-14 text-center font-semibold border border-gray-200 dark:border-gray-700">
                                 {{ dayjs(date).format('MM/DD') }}</div>
                             <button v-else @click="openModal(date)"
-                                class="flex items-center justify-center rounded-full bg-sky-100 dark:bg-sky-600 text-sm text-sky-800 dark:text-white hover:bg-sky-200 dark:hover:bg-sky-700 h-12 w-12 text-center font-semibold">
-                                {{ list.max_level ? 'Lv' + list.max_level : 'skip' }}
+                                :class="{
+                                    'bg-sky-200': list.max_level === 1,
+                                    'bg-sky-300': list.max_level === 2,
+                                    'bg-sky-400': list.max_level === 3,
+                                    'bg-sky-100': list.max_level === null,
+                                }"
+                                class="flex flex-col items-center justify-center rounded-full text-sm text-sky-800 hover:bg-sky-500 h-14 w-14 text-center font-semibold">
+                                <span class="text-[0.5rem] leading-[0.8]">{{ dayjs(date).format('MMDD') }}</span>
+                                <span>{{ list.max_level ? 'Lv' + list.max_level : 'skip' }}</span>
                             </button>
                         </template>
                     </div>
