@@ -24,7 +24,7 @@ Route::delete('logout', [AuthController::class, 'destroy'])->name('logout');
 Route::middleware('auth')->group(function () {
     // 홈(습관 기록)
     Route::resource('log', LogController::class)->only(['store', 'destroy']);
-    Route::get('home/{log_id?}', [LogController::class, 'index'])->name('home');
+    Route::get('home/{log?}', [LogController::class, 'index'])->name('home');
     Route::get('/', [LogController::class, 'index'])->name('root');
     
     // Habit

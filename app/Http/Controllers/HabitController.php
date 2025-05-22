@@ -49,13 +49,13 @@ class HabitController extends Controller
             // 진행중인 습관 최대 3개 제한
             $logs = new Log();
             $currentLogs = $logs->selectCurrentLogsForUser($user->id);
-            if ($logs->count() >= 3) {
+            if ($currentLogs->count() >= 3) {
                 return redirect()->route('home')->with('error', '3개 이상 습관을 진행할 수 없습니다.');
             }
 
             $habit = new Habit();
             // habits, habit_levels, logs, level_logs 한번에 초기 생성
-            $habit->createWithLevelsAndLogs([
+            $habitData = $habit->createWithLevelsAndLogs([
                 'title' => $request['title'],
                 'emoji' => $request['emoji'],
                 'creator_id' => $user['id'],

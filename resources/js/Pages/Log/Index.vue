@@ -129,7 +129,7 @@ const openModal = async (date) => {
 // 탭을 눌렀을 때 작동
 const selectLog = (log) => {
     logId.value = log.id
-    router.visit(route('home', { log_id: log.id }), {
+    router.visit(route('home', log.id), {
         preserveScroll: true,
         preserveState: true, // 상태 유지 (모달 등)
         only: ['habitLevel', 'levelLogData', 'selectedLog'], // 이 값들만 서버에서 받아옴

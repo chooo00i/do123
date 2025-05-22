@@ -77,6 +77,8 @@ class Habit extends Model
                 // Logs, level_logs 20일치 데이터 저장
                 (new Log)->addLogWithLevelLogs($habitData);
             }
+
+            return $habitData;
         });
     }
 

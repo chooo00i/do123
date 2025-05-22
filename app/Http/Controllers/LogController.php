@@ -7,22 +7,26 @@ use App\Models\LevelLog;
 use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class LogController extends Controller
 {
+    use AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
-    public function index($logId = null)
+    public function index(?Log $log)
     {
+        if ($log->id) $this->authorize('view', $log);
         $user = auth()->user();
 
         // user의 진행중인 습관 log 정보
         $logs = new Log();
         $currentLogs = $logs->selectCurrentLogsForUser($user->id);
 
-        $selectedLog = $logId
-            ? $currentLogs->firstWhere('id', $logId)
+        $selectedLog = $log->id
+            ? $currentLogs->firstWhere('id', $log->id)
             : $currentLogs->first();
 
         $habitLevel = null;
@@ -105,6 +109,6 @@ class LogController extends Controller
             }
         }
         
-        return route('home');
+        return redirect()->route('home');
     }
 }
