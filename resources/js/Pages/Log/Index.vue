@@ -141,7 +141,7 @@ const newHabit = () => {
         alert('3개 이상 습관을 진행할 수 없습니다.')
         return
     } 
-    route('habit.index')
+    router.visit(route('habit.index'))
 }
 
 </script>
