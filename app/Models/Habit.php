@@ -109,8 +109,8 @@ class Habit extends Model
         // $selectedRoundLog = DB::table('logs')->where('id', $data['logId'])->firstOrFail(); // 기존 코드
         $startDate = Carbon::parse($selectedLog->start_date);
 
-        foreach ($data['levels'] as $levelGroup) { // $levelList -> $levelGroup으로 변수명 변경
-            foreach ($levelGroup as $levelData) { // $list -> $levelData으로 변수명 변경
+        foreach ($data['levels'] as $levelGroup) {
+            foreach ($levelGroup as $levelData) {
                 // 삭제 대상이 아닌 경우에만 생성 또는 수정 로직 실행
                 if (isset($levelData['id']) && in_array($levelData['id'], $data['removedLevelIds'] ?? [])) {
                     continue; // 삭제 대상이면 건너뛰기
@@ -139,8 +139,9 @@ class Habit extends Model
             'seq' => $levelData['seq'],
         ]);
 
+        $habitGoalDays = 20;
         $levelLogsData = [];
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < $habitGoalDays; $i++) {
             $levelLogsData[] = [
                 'log_id' => $logId,
                 'habit_level_id' => $habitLevel->id,

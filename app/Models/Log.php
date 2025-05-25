@@ -29,8 +29,9 @@ class Log extends Model
 
     public function addLevelLogs(array $levels, object $today): array
     {
+        $habitGoalDays = 20;
         $models = [];
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < $habitGoalDays; $i++) {
             foreach ($levels as $habit_level) {
                 $models[] = new LevelLog([
                     'habit_level_id' => $habit_level->id,

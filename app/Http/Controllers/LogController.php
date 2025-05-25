@@ -33,10 +33,10 @@ class LogController extends Controller
         $levelLogData = null;
 
         if ($selectedLog) {
-            //  첫번째 로그 habit_level 정보
+            //  첫번째 로그 혹은 선택된 로그 habit_level 정보
             $habitLevel = (new HabitLevel())->selectHabitLevelsGroupByLevel($selectedLog->habit_id);
 
-            // 첫번째 로그 20일 정보
+            // 첫번째 로그 혹은 선택된 로그 20일 정보
             $levelLogData = (new LevelLog())->getLevelLogData($selectedLog->id);
         }
 

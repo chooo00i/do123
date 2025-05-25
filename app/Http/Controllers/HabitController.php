@@ -12,6 +12,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class HabitController extends Controller
 {
     use AuthorizesRequests;
+    
     /**
      * Display a listing of the resource.
      */
