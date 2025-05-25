@@ -111,19 +111,4 @@ class LogController extends Controller
         
         return redirect()->route('home');
     }
-
-    /**
-     * 통계 페이지
-     */
-    // public function showStatistics(Request $request) {
-    //     $logId = $request->logId;
-    //     $log = Log::findOrFail($logId);
-
-    //     if (!$log) {
-    //         return redirect()->back();
-    //     }
-
-    //     $this->authorize('view', $log);
-    //     $user = auth()->user();
-    // }
 }

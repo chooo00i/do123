@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\LevelLogController;
+use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\UserAccountController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\HabitController;
@@ -26,7 +27,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('log', LogController::class)->only(['store', 'destroy']);
     Route::get('home/{log?}', [LogController::class, 'index'])->name('home');
     Route::get('/', [LogController::class, 'index'])->name('root');
-    // Route::get('level-logs/statistics', [LogController::class, 'showStatistics'])->name(name: 'level_logs.statistics');
     
     // Habit
     Route::resource('habit', HabitController::class)->only(['index', 'create', 'store', 'update']);
@@ -40,4 +40,7 @@ Route::middleware('auth')->group(function () {
     // 마이페이지
     Route::get('user-account/{user}', [UserAccountController::class, 'edit'])->name('user-account.edit');
     Route::put('user-account', [UserAccountController::class, 'update'])->name('user-account.update');
+
+    // 통계
+    Route::resource('statistics', StatisticsController::class)->only(['index', 'show']);
 });
