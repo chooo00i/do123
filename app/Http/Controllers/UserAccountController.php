@@ -38,13 +38,18 @@ class UserAccountController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $request->id,
+            'email' => 'required|email|unique:users,email,' . $request->id, // 원래 이메일은 유니크에서 제외
             'password' => 'required|min:8|confirmed'
         ]);
 
-        User::where('id', $request->id)->update($validated);
-
-        return redirect()->back()
-            ->with('success', '수정 완료!');
+        $user = User::find($request->id);
+        if ($user) {
+            $user->update($validated);
+            return redirect()->back()
+                ->with('success', '수정 완료!');
+        } else {
+            return redirect()->back()
+                ->with('error', '유저 정보 오류!');
+        }
     }
 }
