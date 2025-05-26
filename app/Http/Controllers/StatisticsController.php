@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Habit;
 use App\Models\Log;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class StatisticsController extends Controller
@@ -13,8 +15,11 @@ class StatisticsController extends Controller
     public function index()
     {
         $user = auth()->user();
+        $userHabits = (new Habit())->selectHabitsForUser($user->id);
 
-        return inertia('Statistics/Index');
+        return inertia('Statistics/Index', [
+            'userHabits' => $userHabits,
+        ]);
     }
 
     /**

@@ -61,7 +61,7 @@ const menus = computed(() => {
     }
 
     return [
-        // { label: 'Overview'  },
+        // { label: 'Overview', href: route('statistics.index')},
         { label: 'My Page', href: route('user-account.edit', user.value.id) },
         { label: 'Logout', href: route('logout'), method: 'delete', as: 'button' },
     ]

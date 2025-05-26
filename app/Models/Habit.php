@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use function PHPUnit\Framework\returnArgument;
 
 class Habit extends Model
 {
@@ -104,9 +105,7 @@ class Habit extends Model
      */
     protected function processHabitLevelsAndLogs(int $habitId, array $data): void
     {
-        // $data['logId']로 Log를 가져오거나, Log 모델 인스턴스를 직접 전달받는 것도 고려
         $selectedLog = Log::findOrFail($data['logId']); // Log 모델 사용 예시
-        // $selectedRoundLog = DB::table('logs')->where('id', $data['logId'])->firstOrFail(); // 기존 코드
         $startDate = Carbon::parse($selectedLog->start_date);
 
         foreach ($data['levels'] as $levelGroup) {
@@ -182,5 +181,83 @@ class Habit extends Model
                 ->whereIn('habit_level_id', $data['removedLevelIds'])
                 ->delete();
         }
+    }
+
+    /**
+     * 유저의 습관 목록
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection<int, Habit>
+     */
+    public function selectHabitsForUser(int $userId): object
+    {
+        $habits = Habit::where('creator_id', $userId)
+            ->get();
+
+        return $habits;
+    }
+
+    /**
+     * 진행중인 log가 없는 habit 목록
+     * @param int $userId
+     * @return \Illuminate\Database\Eloquent\Collection<int, Habit>
+     */
+    public function selectNotProgressingHabits(int $userId)
+    {
+        $notProgressingHabits = Habit::where('creator_id', $userId)
+            ->whereDoesntHave('logs', function ($query) {
+                $query->whereDate('start_date', '<=', now())
+                    ->whereDate('end_date', '>=', now());
+            })
+            ->get();
+
+        return $notProgressingHabits;
+    }
+
+    /**
+     * 새로운 회차 시작
+     * @param mixed $data
+     * @param \App\Models\Habit $habit
+     * @return void
+     */
+    public function startNewRound($data, Habit $habit)
+    {
+        // habit 업데이트
+        Habit::where('id', $habit->id)->update(['title' => $data['title'], 'emoji' => $data['emoji']]);
+
+        $levels = [];
+        // habit_levels 업데이트, 삭제, 추가
+        foreach ($data['levels'] as $levelGroup) {
+            foreach ($levelGroup as $levelData) {
+                // 삭제 대상이 아닌 경우에만 생성 또는 수정 로직 실행
+                if (isset($levelData['id']) && in_array($levelData['id'], $data['removedLevelIds'] ?? [])) {
+                    continue; // 삭제 대상이면 건너뛰기
+                }
+
+                $levels[] = $levelData;
+
+                if (is_null($levelData['id'])) {
+                    // 생성 로직
+                    HabitLevel::create([
+                        'habit_id' => $habit->id,
+                        'content' => $levelData['content'],
+                        'level' => $levelData['level'],
+                        'seq' => $levelData['seq'],
+                    ]);
+                } else {
+                    // 수정 로직 (삭제 대상이 아닌 경우)
+                    HabitLevel::where('id', $levelData['id'])->update(['content' => $levelData['content'], 'updated_at' => now()]);
+                }
+            }
+        }
+        if (isset($data['removedLevelIds']) && !empty($data['removedLevelIds'])) {
+            HabitLevel::whereIn('id', $data['removedLevelIds'])->delete();
+        }
+
+        // 로그 데이터 생성
+        $habitData = [
+            'habit' => $habit,
+            'levels' => $levels,
+        ];
+        (new Log)->addLogWithLevelLogs($habitData);
     }
 }

@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('habit', HabitController::class)->only(['index', 'create', 'store', 'update']);
     Route::get('habit/edit/{habit}/{log_id}', [HabitController::class, 'edit'])->name('habit.edit');
     Route::get('habit/copy/{habit}', [HabitController::class, 'copy'])->name('habit.copy');
+    Route::post('habit/{habit?}', [HabitController::class, 'store'])->name('habit.store');
     
     // LevelLog
     Route::patch('level-logs/check', [LevelLogController::class, 'check'])->name('level_log.check');

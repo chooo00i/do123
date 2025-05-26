@@ -32,13 +32,13 @@ class Log extends Model
         $habitGoalDays = 20;
         $models = [];
         for ($i = 0; $i < $habitGoalDays; $i++) {
-            foreach ($levels as $habit_level) {
+            foreach ($levels as $habit_level_item) {
                 $models[] = new LevelLog([
-                    'habit_level_id' => $habit_level->id,
-                    'content' => $habit_level->content,
-                    'level' => $habit_level->level,
-                    'seq' => $habit_level->seq,
-                    'log_date' => $today->copy()->addDays($i),
+                    'habit_level_id' => data_get($habit_level_item, 'id'),
+                    'content'        => data_get($habit_level_item, 'content'),
+                    'level'          => data_get($habit_level_item, 'level'),
+                    'seq'            => data_get($habit_level_item, 'seq'),
+                    'log_date'       => $today->copy()->addDays($i),
                 ]);
             }
         }

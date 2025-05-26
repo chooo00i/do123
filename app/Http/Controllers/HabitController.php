@@ -18,9 +18,18 @@ class HabitController extends Controller
      */
     public function index()
     {
-        $templateHabits = $templateHabits = Habit::where('is_template', 1)->get();
+        $user = auth()->user();
+
+        // 템플릿 습관 목록
+        $templateHabits = Habit::where('is_template', 1)->get();
+
+        // 현재 진행중인 것 제외 나의 습관 목록
+        $habit = new Habit();
+        $notProgressingHabits = $habit->selectNotProgressingHabits($user->id);
+
         return inertia('Habit/Index', [
             'templateHabits' => $templateHabits,
+            'notProgressingHabits' => $notProgressingHabits,
         ]);
     }
 
@@ -40,7 +49,7 @@ class HabitController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(HabitRequest $request)
+    public function store(HabitRequest $request, ?Habit $habit)
     {
         try {
             // Habit/Habit_level 저장
@@ -54,21 +63,28 @@ class HabitController extends Controller
                 return redirect()->route('home')->with('error', '3개 이상 습관을 진행할 수 없습니다.');
             }
 
-            $habit = new Habit();
-            // habits, habit_levels, logs, level_logs 한번에 초기 생성
-            $habitData = $habit->createWithLevelsAndLogs([
-                'title' => $request['title'],
-                'emoji' => $request['emoji'],
-                'creator_id' => $user['id'],
-                'is_template' => $isAdmin,
-                'is_public' => $request['isPublic'] ?? false,
-                'levels' => $request['levels'],
-            ]);
-            // 성공 응답
-            return redirect()->route('home')->with('success', '습관 만들기 완료!');
+            $habitModel = new Habit();
+            // 새로운 회차 시작: habit, habit_levels 수정 후 logs, level_logs 생성
+            if ($request['type'] == 'newRound') {
+                $habitModel->startNewRound($request, $habit);
+                // 성공 응답
+                return redirect()->route('home')->with('success', '새로운 회차 시작!');
+            } else {
+                // 새 habits, habit_levels, logs, level_logs 한번에 초기 생성
+                $habitData = $habitModel->createWithLevelsAndLogs([
+                    'title' => $request['title'],
+                    'emoji' => $request['emoji'],
+                    'creator_id' => $user['id'],
+                    'is_template' => $isAdmin,
+                    'is_public' => $request['isPublic'] ?? false,
+                    'levels' => $request['levels'],
+                ]);
+                // 성공 응답
+                return redirect()->route('home')->with('success', '습관 만들기 완료!');
+            }
         } catch (\Exception $e) {
             // 실패 응답
-            return redirect()->back()->with('error', '저장 실패');
+            return redirect()->back()->with('error', '저장 실패' . $e);
         }
     }
 
@@ -133,8 +149,9 @@ class HabitController extends Controller
      */
     public function copy(Habit $habit)
     {
-        // 템플릿이 아닌 습관 id는 접근 불가
-        if (!$habit->is_template) {
+        $user = auth()->user();
+        // 템플릿이 아닌 습관 id 혹은 생성자가 아니면 접근 불가
+        if (!$habit->is_template && $habit->creator_id !== $user->id) {
             return redirect()->back();
         }
         // habitLevels
@@ -146,7 +163,7 @@ class HabitController extends Controller
             [
                 'habit' => $habit,
                 'habitLevels' => $habitLevels,
-                'type' => 'copy',
+                'type' => $habit->is_template ? 'copy' : 'newRound', // 템플릿 복사 혹은 새로운 회차 시작
             ]
         );
     }

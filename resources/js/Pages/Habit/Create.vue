@@ -88,6 +88,7 @@ const form = useForm({
     },
     removedLevelIds: [],
     logId: logId,
+    type: type,
 })
 
 function addInput(level) {
@@ -131,7 +132,8 @@ const save = () => {
             form.put(route('habit.update', habit.id))
         }
     } else {
-        form.post(route('habit.store'))
+        if (type === 'newRound') form.post(route('habit.store', habit.id))
+        else form.post(route('habit.store'))
     }
 }
 

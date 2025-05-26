@@ -33,7 +33,7 @@
             <div v-if="logs[0]" class="flex flex-col lg:flex-row gap-6 justify-between">
                 <div>
                     <h2 class="text-3xl font-extrabold dark:text-white mb-5">
-                        {{ selectedLog ? selectedLog.title : logs[0].title }}
+                        {{ selectedLog ? selectedLog.title + ' · ' + selectedLog.round + '회차' : logs[0].title + ' · ' + logs[0].round + '회차' }}
                     </h2>
                     <div class="flex-1">
                         <div class="flex flex-col gap-4">
