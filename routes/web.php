@@ -36,12 +36,12 @@ Route::middleware('auth')->group(function () {
     
     // LevelLog
     Route::patch('level-logs/check', [LevelLogController::class, 'check'])->name('level_log.check');
-    Route::get('level-logs/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_logs.by_date');
+    Route::get('level-logs/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_log.by_date');
 
     // 마이페이지
     Route::get('user-account/{user}', [UserAccountController::class, 'edit'])->name('user-account.edit');
     Route::put('user-account', [UserAccountController::class, 'update'])->name('user-account.update');
 
     // 통계
-    Route::resource('statistics', StatisticsController::class)->only(['index', 'show']);
+    // Route::resource('statistics', StatisticsController::class)->only(['index', 'show']);
 });

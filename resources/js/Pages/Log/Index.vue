@@ -120,7 +120,7 @@ const openModal = async (date) => {
     const tabLogId = logId.value > 0 ? logId.value : selectedLog.id
 
     try {
-        const response = await axios.get(route('level_logs.by_date', {
+        const response = await axios.get(route('level_log.by_date', {
             log_id: tabLogId,
             date: date
         }))
