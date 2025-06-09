@@ -77,4 +77,49 @@ class LevelLog extends Model
 
         return $levelLogs;
     }
+
+    /**
+     * 행동 순위 관련 데이터
+     * @param int $logId
+     * @return array{content: mixed, count: int, level: mixed, percentage: float, rank: int[]}
+     */
+    public function getHabitLevelRankData(int $logId)
+    {
+        $checkedHabitLevels = $this->selectCheckedLevelLogs($logId);
+        $groupedByHabitLevelId = $this->groupBy($checkedHabitLevels, 'habit_level_id');
+        uasort($groupedByHabitLevelId, function ($a, $b) {
+            return count($b) <=> count($a);
+        });
+
+        $totalCount = array_sum(array_map('count', $groupedByHabitLevelId));
+        $habitLevelCounts = [];
+        $rank = 0;
+        $lastCount = -1;
+        $index = 0;
+
+        foreach ($groupedByHabitLevelId as $habitLevels) {
+            $currentCount = count($habitLevels);
+            // 이전 항목과 count가 다를 경우에만 rank를 현재 index+1로 갱신
+            // count가 같으면 이전 rank를 그대로 사용하게 되어 동점 처리
+            if ($currentCount !== $lastCount) {
+                $rank = $index + 1;
+            }
+
+            // 퍼센테이지: 0으로 나누는 오류를 방지
+            $percentage = ($totalCount > 0) ? ($currentCount / $totalCount) * 100 : 0;
+
+            $habitLevelCounts[] = [
+                'count' => $currentCount,
+                'content' => $habitLevels[0]->content,
+                'level' => $habitLevels[0]->level,
+                'rank' => $rank,
+                'percentage' => round($percentage),
+            ];
+
+            $lastCount = $currentCount;
+            $index++;
+        }
+
+        return $habitLevelCounts;
+    }
 }
