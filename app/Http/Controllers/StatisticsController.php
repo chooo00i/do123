@@ -14,12 +14,7 @@ class StatisticsController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
-        $userHabits = (new Habit())->selectHabitsForUser($user->id);
-
-        return inertia('Statistics/Index', [
-            'userHabits' => $userHabits,
-        ]);
+        //
     }
 
     /**
@@ -43,7 +38,13 @@ class StatisticsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // log로 통계
+
+        // 1. level, skip 백분율 / 20일 중 skip 하지 않은 비율
+
+        // 2. 체크한 habit_level 회수 및 내림 차순 정렬
+
+        // 3. 일자별 체크한 habit_level
     }
 
     /**

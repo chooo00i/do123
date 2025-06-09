@@ -30,58 +30,67 @@
         </ul>
         <!-- 콘텐츠 영역 -->
         <div class="p-4 bg-white rounded-lg md:p-8 dark:bg-gray-800">
-            <div v-if="logs[0]" class="flex flex-col lg:flex-row gap-6 justify-between">
-                <div>
-                    <h2 class="text-3xl font-extrabold dark:text-white mb-5">
-                        {{ selectedLog ? selectedLog.title + ' · ' + selectedLog.round + '회차' : logs[0].title + ' · ' + logs[0].round + '회차' }}
-                    </h2>
-                    <div class="flex-1">
-                        <div class="flex flex-col gap-4">
-                            <div v-for="level in [1, 2, 3]" :key="level" class="flex items-start gap-4">
-                                <div class="w-5 h-5 rounded-full mt-1" :class="{
-                                    'bg-sky-200': level === 1,
-                                    'bg-sky-300': level === 2,
-                                    'bg-sky-500': level === 3,
-                                }"></div>
-                                <div>
-                                    <p class="font-bold text-sky-600 dark:text-sky-300 text-xs sm:text-base">
-                                        Level {{ level }}
-                                    </p>
-                                    <p class="text-gray-700 dark:text-gray-300 text-xs sm:text-sm">
-                                        <span v-for="(data, index) in habitLevel[level]" :key="data">
-                                            {{ data.content }}<span v-if="index < habitLevel[level].length - 1"> ·
+            <div v-if="logs[0]">
+                <!-- 행동 목록 + 체크 -->
+                <div class="flex flex-col lg:flex-row gap-6 justify-between">
+                    <!-- 행동 목록 -->
+                    <div>
+                        <h2 class="text-3xl font-extrabold dark:text-white mb-5">
+                            {{ selectedLog ? selectedLog.title + ' · ' + selectedLog.round + '회차' : logs[0].title + ' · ' + logs[0].round + '회차' }}
+                        </h2>
+                        <div class="flex-1">
+                            <div class="flex flex-col gap-4">
+                                <div v-for="level in [1, 2, 3]" :key="level" class="flex items-start gap-4">
+                                    <div class="w-5 h-5 rounded-full mt-1" :class="{
+                                        'bg-sky-200': level === 1,
+                                        'bg-sky-300': level === 2,
+                                        'bg-sky-500': level === 3,
+                                    }"></div>
+                                    <div>
+                                        <p class="font-bold text-sky-600 dark:text-sky-300 text-xs sm:text-base">
+                                            Level {{ level }}
+                                        </p>
+                                        <p class="content-sm">
+                                            <span v-for="(data, index) in habitLevel[level]" :key="data">
+                                                {{ data.content }}<span v-if="index < habitLevel[level].length - 1"> ·
+                                                </span>
                                             </span>
-                                        </span>
-                                    </p>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- 20일 체크 -->
+                    <aside class="w-full lg:w-80">
+                        <div class="grid grid-cols-5 gap-1">
+                            <template v-for="(list, date) in levelLogData" :key="date">
+                                <div v-if="list.status == 'unchecked'"
+                                    class="flex items-center justify-center rounded-full text-sm text-gray-800 dark:text-white h-14 w-14 text-center font-semibold border border-gray-200 dark:border-gray-700">
+                                    {{ dayjs(date).format('MM/DD') }}</div>
+                                <button v-else @click="openModal(date)"
+                                    :class="{
+                                        'bg-sky-200': list.max_level === 1,
+                                        'bg-sky-300': list.max_level === 2,
+                                        'bg-sky-400': list.max_level === 3,
+                                        'bg-sky-100': list.max_level === null,
+                                    }"
+                                    class="flex flex-col items-center justify-center rounded-full text-sm text-sky-800 hover:bg-sky-500 h-14 w-14 text-center font-semibold">
+                                    <span class="text-[0.5rem] leading-[0.8]">{{ dayjs(date).format('MMDD') }}</span>
+                                    <span>{{ list.max_level ? 'Lv' + list.max_level : 'skip' }}</span>
+                                </button>
+                            </template>
+                        </div>
+                    </aside>
+                    <Modal :show="showModal" :title="modalTitle" @close="showModal = false">
+                        <Edit :levelLogs="levelLogs" :showModal="showModal" />
+                    </Modal>
                 </div>
-                <!-- 20일 체크 -->
-                <aside class="w-full lg:w-80">
-                    <div class="grid grid-cols-5 gap-1">
-                        <template v-for="(list, date) in levelLogData" :key="date">
-                            <div v-if="list.status == 'unchecked'"
-                                class="flex items-center justify-center rounded-full text-sm text-gray-800 dark:text-white h-14 w-14 text-center font-semibold border border-gray-200 dark:border-gray-700">
-                                {{ dayjs(date).format('MM/DD') }}</div>
-                            <button v-else @click="openModal(date)"
-                                :class="{
-                                    'bg-sky-200': list.max_level === 1,
-                                    'bg-sky-300': list.max_level === 2,
-                                    'bg-sky-400': list.max_level === 3,
-                                    'bg-sky-100': list.max_level === null,
-                                }"
-                                class="flex flex-col items-center justify-center rounded-full text-sm text-sky-800 hover:bg-sky-500 h-14 w-14 text-center font-semibold">
-                                <span class="text-[0.5rem] leading-[0.8]">{{ dayjs(date).format('MMDD') }}</span>
-                                <span>{{ list.max_level ? 'Lv' + list.max_level : 'skip' }}</span>
-                            </button>
-                        </template>
-                    </div>
-                </aside>
-                <Modal :show="showModal" :title="modalTitle" @close="showModal = false">
-                    <Edit :levelLogs="levelLogs" :showModal="showModal" />
-                </Modal>
+                <!-- 통계 -->
+                <div class="mt-7">
+                    <!-- <Level /> -->
+                    <HabitLevel v-if="habitLevelCounts[0]" class="mt-7" :habitLevelCounts="habitLevelCounts" />
+                </div>
             </div>
             <div v-else>
                 <h3 class="title-xl">👆 습관 만들기를 시작해보세요!</h3>
@@ -100,14 +109,15 @@ import dayjs from 'dayjs'
 import axios from 'axios'
 import Modal from '@/Components/UI/Modal.vue'
 import Edit from './Edit.vue'
+import Level from '@/Pages/Statistics/Level.vue'
+import HabitLevel from '@/Pages/Statistics/HabitLevel.vue'
 
-
-
-const { logs, habitLevel, levelLogData, selectedLog } = defineProps({
+const { logs, habitLevel, levelLogData, selectedLog, habitLevelCounts } = defineProps({
     logs: Object,
     habitLevel: Object,
     levelLogData: Object,
     selectedLog: Object,
+    habitLevelCounts: Array,
 })
 
 const showModal = ref(false)
@@ -139,10 +149,11 @@ const selectLog = (log) => {
     router.visit(route('home', log.id), {
         preserveScroll: true,
         preserveState: true, // 상태 유지 (모달 등)
-        only: ['habitLevel', 'levelLogData', 'selectedLog'], // 이 값들만 서버에서 받아옴
+        only: ['habitLevel', 'levelLogData', 'selectedLog', 'habitLevelCounts'],
     })
 }
 
+// 새 습관 이동
 const newHabit = () => {
     if (logs.length >= 3) {
         alert('3개 이상 습관을 진행할 수 없습니다.')
@@ -150,5 +161,12 @@ const newHabit = () => {
     } 
     router.visit(route('habit.index'))
 }
+
+// 해당 회차 통계(다른 페이지 import)
+// 1. 원형 그래프(레벨 비율)
+
+// 2. 실천 행동 순위
+
+// 3. 일일 기록 한번에 보기
 
 </script>

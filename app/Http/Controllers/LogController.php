@@ -6,22 +6,25 @@ use App\Models\HabitLevel;
 use App\Models\LevelLog;
 use App\Models\Log;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Traits\Helper;
 
 class LogController extends Controller
 {
     use AuthorizesRequests;
+    use Helper;
 
     /**
-     * Display a listing of the resource.
+     * 메인 log list + 통계
      */
     public function index(?Log $log)
     {
-        if ($log->id) $this->authorize('view', $log);
+        // 해당 log 작성자만 접속 가능
+        if ($log->id)
+            $this->authorize('view', $log);
         $user = auth()->user();
 
-        // user의 진행중인 습관 log 정보
+        // 1. user의 진행중인 습관 log 정보
         $logs = new Log();
         $currentLogs = $logs->selectCurrentLogsForUser($user->id);
 
@@ -31,20 +34,62 @@ class LogController extends Controller
 
         $habitLevel = null;
         $levelLogData = null;
+        $habitLevelCounts = null;
 
         if ($selectedLog) {
-            //  첫번째 로그 혹은 선택된 로그 habit_level 정보
+            // 1-1. habit_level 정보
             $habitLevel = (new HabitLevel())->selectHabitLevelsGroupByLevel($selectedLog->habit_id);
 
-            // 첫번째 로그 혹은 선택된 로그 20일 정보
+            // 1-2. 20일 정보(가장 높은 레벨, 일자 등)
             $levelLogData = (new LevelLog())->getLevelLogData($selectedLog->id);
+
+            // 2. 통계 관련 정보
+            // 2-1. level, skip 백분율 / 20일 중 skip 하지 않은 비율
+
+            // 2-2. 체크한 habit_level 회수 및 내림 차순 정렬
+            $checkedHabitLevels = (new LevelLog())->selectCheckedLevelLogs($selectedLog->id);
+            $groupedByHabitLevelId = $this->groupBy($checkedHabitLevels, 'habit_level_id');
+            uasort($groupedByHabitLevelId, function ($a, $b) {
+                return count($b) <=> count($a);
+            });
+            $habitLevelCounts = [];
+            $totalCount = array_sum(array_map('count', $groupedByHabitLevelId));
+            $habitLevelCounts = [];
+            $rank = 0;
+            $lastCount = -1;
+            $index = 0;
+
+            foreach ($groupedByHabitLevelId as $habitLevels) {
+                $currentCount = count($habitLevels);
+                // 이전 항목과 count가 다를 경우에만 rank를 현재 index+1로 갱신
+                // count가 같으면 이전 rank를 그대로 사용하게 되어 동점 처리
+                if ($currentCount !== $lastCount) {
+                    $rank = $index + 1;
+                }
+
+                // 퍼센테이지: 0으로 나누는 오류를 방지
+                $percentage = ($totalCount > 0) ? ($currentCount / $totalCount) * 100 : 0;
+
+                $habitLevelCounts[] = [
+                    'count' => $currentCount,
+                    'content' => $habitLevels[0]->content,
+                    'level' => $habitLevels[0]->level,
+                    'rank' => $rank,
+                    'percentage' => round($percentage),
+                ];
+
+                $lastCount = $currentCount;
+                $index++;
+            }
         }
+
 
         return inertia('Log/Index', [
             'logs' => $currentLogs,
             'habitLevel' => $habitLevel,
             'levelLogData' => $levelLogData,
             'selectedLog' => $selectedLog,
+            'habitLevelCounts' => $habitLevelCounts,
         ]);
     }
 
@@ -108,7 +153,18 @@ class LogController extends Controller
                 $logItem->save();
             }
         }
-        
+
         return redirect()->route('home');
+    }
+
+    public function history()
+    {
+        $user = auth()->user();
+        // 이전에 진행한 로그 목록
+        // $userHabits = (new Habit())->selectHabitsForUser($user->id);
+
+        // return inertia('Statistics/Index', [
+        //     'userHabits' => $userHabits,
+        // ]);
     }
 }

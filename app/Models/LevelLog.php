@@ -33,13 +33,13 @@ class LevelLog extends Model
             ->orderBy('log_date')
             ->orderBy('level')
             ->orderBy('seq')
-            ->get()->toArray();
+            ->get();
 
         $group = $this->groupBy($levels, 'log_date');
         return $group;
     }
 
-    public function getLevelLogData($logId)
+    public function getLevelLogData(int $logId)
     {
         $levelLogGroup = $this->selectLevelLogsGroupByDate($logId);
         $levelLogData = [];
@@ -62,5 +62,19 @@ class LevelLog extends Model
             $levelLogData[$date]['max_level'] = $levels ? max($levels) : null;
         }
         return $levelLogData;
+    }
+
+    /**
+     * 체크된 levelLogs 정보
+     * @param int $logId
+     * @return \Illuminate\Database\Eloquent\Collection<int, LevelLog>
+     */
+    public function selectCheckedLevelLogs(int $logId)
+    {
+        $levelLogs = LevelLog::where('log_id', $logId)
+            ->where('is_checked', true)
+            ->get();
+
+        return $levelLogs;
     }
 }

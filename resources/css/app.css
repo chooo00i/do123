@@ -52,4 +52,8 @@
     .title-3xl {
         @apply mb-3 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white
     }
+
+    .content-sm {
+        @apply text-gray-700 dark:text-gray-300 text-xs sm:text-sm
+    }
 }

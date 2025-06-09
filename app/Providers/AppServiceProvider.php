@@ -24,9 +24,9 @@ class AppServiceProvider extends ServiceProvider
     {
         if (App::environment('local')) {
             DB::listen(function ($query) {
-                $location = collect(debug_backtrace())->filter(function ($trace) {
-                    return !str_contains($trace['file'], 'vendor/');
-                })->first(); // vendor/가 아닌 호출 스택의 첫 위치
+                $location = collect(debug_backtrace())->first(function ($trace) {
+                    return isset($trace['file']) && !str_contains($trace['file'], 'vendor/');
+                });
 
                 $bindings = implode(", ", $query->bindings); // 바인딩 값을 문자열로 변환
 

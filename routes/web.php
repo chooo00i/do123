@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('log', LogController::class)->only(['store', 'destroy']);
     Route::get('home/{log?}', [LogController::class, 'index'])->name('home');
     Route::get('/', [LogController::class, 'index'])->name('root');
+    Route::get('log/history', [LogController::class, 'history'])->name('log.history');
     
     // Habit
     Route::resource('habit', HabitController::class)->only(['index', 'create', 'store', 'update']);
