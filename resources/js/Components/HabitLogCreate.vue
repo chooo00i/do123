@@ -51,7 +51,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useForm } from '@inertiajs/vue3'
-import { defineEmits } from 'vue'
 
 const form = useForm({
     levels: {
