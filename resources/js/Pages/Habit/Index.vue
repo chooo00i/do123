@@ -11,7 +11,7 @@
             </Link>
         </div>
     </div>
-    <div v-if="notProgressingHabits">
+    <div v-if="notProgressingHabits && notProgressingHabits[0]">
         <div class="mb-6">
             <h3 class="title-xl">습관 이어하기</h3>
             <p class="text-gray-500 dark:text-gray-400">새로운 회차를 진행해보세요.</p>
