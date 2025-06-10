@@ -95,7 +95,7 @@
             <div v-else>
                 <h3 class="title-xl">👆 습관 만들기를 시작해보세요!</h3>
                 <p class="mb-3 text-gray-500 dark:text-gray-400">아직 시작한 습관이 없어요. + 를 눌러 시작해보세요. 추천 습관을 선택하거나 나만의 습관 루틴을
-                    만들어 시작할 수 있습니다.</p>
+                    만들어 시작할 수 있어요.</p>
             </div>
         </div>
     </div>
