@@ -63,7 +63,7 @@ class Log extends Model
         $log->creator_id = $habit->creator_id;
         $log->habit_id = $habit->id;
         $log->start_date = $today;
-        $log->end_date = $today->copy()->addDays(20);
+        $log->end_date = $today->copy()->addDays(19);
         $log->round = $this->checkLastRound($habit['id']) + 1;
         $log->save();
 

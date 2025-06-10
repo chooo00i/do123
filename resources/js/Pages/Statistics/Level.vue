@@ -9,14 +9,14 @@
             <!-- 스탯 그리드 -->
             <div class="grid grid-cols-3 gap-3 lg:w-3/5">
                 <div v-for="stat in stats" :key="stat.title" :class="[
-                    'p-4 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border rounded-lg shadow-sm',
+                    'p-4 text-gray-700 dark:text-gray-300 dark:bg-gray-800 border rounded-lg shadow-sm',
                     stat.isTotal ? 'bg-sky-600 text-white' : '',
                     stat.colSpan
                 ]">
                     <div>
                         <div class="flex justify-between items-center mb-2">
                             <h3 class="font-bold text-sm">{{ stat.title }}</h3>
-                            <div :class="['w-2 h-2 rounded-full', stat.color]"></div>
+                            <div :class="['w-3 h-3 rounded-full', stat.color]"></div>
                         </div>
                         <p class="text-2xl font-bold mb-1">{{ stat.percentage }}</p>
                         <p class="text-sm">{{ stat.ratio }}</p>

@@ -1,7 +1,7 @@
 <template>
     <div>
         <h2 class="title-xl">습관 행동 순위</h2>
-        <div class="relative w-full flex-grow">
+        <div class="relative w-full flex-grow mt-6">
             <Bar :data="chartData" :options="chartOptions" />
         </div>
         <div>

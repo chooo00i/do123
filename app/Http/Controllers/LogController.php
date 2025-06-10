@@ -8,6 +8,7 @@ use App\Models\Log;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Traits\Helper;
+use Illuminate\Support\Carbon;
 
 class LogController extends Controller
 {
@@ -22,9 +23,15 @@ class LogController extends Controller
         // 해당 log 작성자만 접속 가능
         if ($log->id)
             $this->authorize('view', $log);
-        $user = auth()->user();
+
+        $startDate = Carbon::parse($log->start_date)->startOfDay();
+        $endDate = Carbon::parse($log->end_date)->startOfDay();
+        if (!today()->between($startDate, $endDate)) {
+            return redirect()->route('home');
+        }
 
         // 1. user의 진행중인 습관 log 정보
+        $user = auth()->user();
         $logs = new Log();
         $currentLogs = $logs->selectCurrentLogsForUser($user->id);
 

@@ -161,12 +161,4 @@ const newHabit = () => {
     } 
     router.visit(route('habit.index'))
 }
-
-// 해당 회차 통계(다른 페이지 import)
-// 1. 원형 그래프(레벨 비율)
-
-// 2. 실천 행동 순위
-
-// 3. 일일 기록 한번에 보기
-
 </script>
