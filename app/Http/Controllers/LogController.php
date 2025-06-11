@@ -41,7 +41,8 @@ class LogController extends Controller
 
         $habitLevel = null;
         $levelLogData = null;
-        $habitLevelCounts = null;
+        $habitLevelRankData = null;
+        $levelRankData = null;
 
         if ($selectedLog) {
             // 1-1. habit_level 정보
@@ -54,7 +55,7 @@ class LogController extends Controller
             // 2-1. level, skip 백분율 / 20일 중 skip 하지 않은 비율
 
             // 2-2. 체크한 habit_level 회수 및 내림 차순 정렬
-            $habitLevelCounts = (new LevelLog())->getHabitLevelRankData($selectedLog->id);
+            $habitLevelRankData = (new LevelLog())->getHabitLevelRankData($selectedLog->id);
         }
 
 
@@ -63,7 +64,7 @@ class LogController extends Controller
             'habitLevel' => $habitLevel,
             'levelLogData' => $levelLogData,
             'selectedLog' => $selectedLog,
-            'habitLevelCounts' => $habitLevelCounts,
+            'habitLevelRankData' => $habitLevelRankData,
         ]);
     }
 

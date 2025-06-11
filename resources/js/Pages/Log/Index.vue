@@ -88,8 +88,8 @@
                 </div>
                 <!-- 통계 -->
                 <div class="mt-7">
-                    <!-- <Level /> -->
-                    <HabitLevel v-if="habitLevelCounts[0]" class="mt-7" :habitLevelCounts="habitLevelCounts" />
+                    <Level />
+                    <HabitLevel v-if="habitLevelRankData[0]" class="mt-7" :habitLevelRankData="habitLevelRankData" />
                 </div>
             </div>
             <div v-else>
@@ -112,12 +112,12 @@ import Edit from './Edit.vue'
 import Level from '@/Pages/Statistics/Level.vue'
 import HabitLevel from '@/Pages/Statistics/HabitLevel.vue'
 
-const { logs, habitLevel, levelLogData, selectedLog, habitLevelCounts } = defineProps({
+const { logs, habitLevel, levelLogData, selectedLog, habitLevelRankData } = defineProps({
     logs: Object,
     habitLevel: Object,
     levelLogData: Object,
     selectedLog: Object,
-    habitLevelCounts: Array,
+    habitLevelRankData: Array,
 })
 
 const showModal = ref(false)
@@ -149,7 +149,7 @@ const selectLog = (log) => {
     router.visit(route('home', log.id), {
         preserveScroll: true,
         preserveState: true, // 상태 유지 (모달 등)
-        only: ['habitLevel', 'levelLogData', 'selectedLog', 'habitLevelCounts'],
+        only: ['habitLevel', 'levelLogData', 'selectedLog', 'habitLevelRankData'],
     })
 }
 

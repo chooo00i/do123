@@ -6,7 +6,7 @@
         </div>
         <div>
             <ul class="grid md:grid-cols-2 md:p-6 pt-3">
-                <li v-for="(data, index) in habitLevelCounts" :key="index"
+                <li v-for="(data, index) in habitLevelRankData" :key="index"
                     class="flex items-center justify-between content-sm mt-2 md:pr-3">
                     <div class="flex items-center">
                         <span class="w-8 font-semibold">{{ data.rank }}</span>
@@ -34,8 +34,8 @@ import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const { habitLevelCounts } = defineProps({
-    habitLevelCounts: Array
+const { habitLevelRankData } = defineProps({
+    habitLevelRankData: Array
 })
 
 const LEVEL_COLOR_MAP = {
@@ -45,11 +45,11 @@ const LEVEL_COLOR_MAP = {
 };
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels)
-const xData = computed(() => habitLevelCounts.map(item => item.content))
-const yData = computed(() => habitLevelCounts.map(item => item.count))
+const xData = computed(() => habitLevelRankData.map(item => item.content))
+const yData = computed(() => habitLevelRankData.map(item => item.count))
 
 const backgroundColors = computed(() =>
-    habitLevelCounts.map(item =>
+    habitLevelRankData.map(item =>
         LEVEL_COLOR_MAP[item.level].background
     )
 );

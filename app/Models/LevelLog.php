@@ -92,7 +92,7 @@ class LevelLog extends Model
         });
 
         $totalCount = array_sum(array_map('count', $groupedByHabitLevelId));
-        $habitLevelCounts = [];
+        $habitLevelRankData = [];
         $rank = 0;
         $lastCount = -1;
         $index = 0;
@@ -108,7 +108,7 @@ class LevelLog extends Model
             // 퍼센테이지: 0으로 나누는 오류를 방지
             $percentage = ($totalCount > 0) ? ($currentCount / $totalCount) * 100 : 0;
 
-            $habitLevelCounts[] = [
+            $habitLevelRankData[] = [
                 'count' => $currentCount,
                 'content' => $habitLevels[0]->content,
                 'level' => $habitLevels[0]->level,
@@ -120,6 +120,6 @@ class LevelLog extends Model
             $index++;
         }
 
-        return $habitLevelCounts;
+        return $habitLevelRankData;
     }
 }
