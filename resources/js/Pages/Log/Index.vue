@@ -88,7 +88,7 @@
                 </div>
                 <!-- 통계 -->
                 <div class="mt-7">
-                    <Level v-if="levelRatioData['dataList'][0]" :levelRatioData="levelRatioData" :selectedLog="selectedLog" />
+                    <Level v-if="levelRatioData['checkedTotalCount']" :levelRatioData="levelRatioData" :selectedLog="selectedLog" />
                     <HabitLevel v-if="habitLevelRankData[0]" class="mt-7" :habitLevelRankData="habitLevelRankData" />
                 </div>
             </div>
@@ -109,8 +109,17 @@ import dayjs from 'dayjs'
 import axios from 'axios'
 import Modal from '@/Components/UI/Modal.vue'
 import Edit from './Edit.vue'
-import Level from '@/Pages/Statistics/Level.vue'
-import HabitLevel from '@/Pages/Statistics/HabitLevel.vue'
+// import Level from '@/Pages/Statistics/Level.vue'
+// import HabitLevel from '@/Pages/Statistics/HabitLevel.vue'
+import { defineAsyncComponent } from 'vue';
+
+const Level = defineAsyncComponent(() => 
+    import('@/Pages/Statistics/Level.vue')
+);
+const HabitLevel = defineAsyncComponent(() => 
+    import('@/Pages/Statistics/HabitLevel.vue')
+);
+
 
 const { logs, habitLevel, levelLogData, selectedLog, habitLevelRankData, levelRatioData } = defineProps({
     logs: Object,
@@ -150,7 +159,7 @@ const selectLog = (log) => {
     router.visit(route('home', log.id), {
         preserveScroll: true,
         preserveState: true, // 상태 유지 (모달 등)
-        only: ['habitLevel', 'levelLogData', 'selectedLog', 'habitLevelRankData'],
+        only: ['habitLevel', 'levelLogData', 'selectedLog', 'habitLevelRankData', 'levelRatioData'],
     })
 }
 
