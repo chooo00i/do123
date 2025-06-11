@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Traits\Helper;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 
 class LevelLog extends Model
 {
@@ -27,7 +29,7 @@ class LevelLog extends Model
      * @param int $logId
      * @return array<array>
      */
-    public function selectLevelLogsGroupByDate(int $logId): array
+    public function selectLevelLogsGroupByDate(int $logId): Collection
     {
         $levels = LevelLog::where('log_id', $logId)
             ->orderBy('log_date')
@@ -35,33 +37,33 @@ class LevelLog extends Model
             ->orderBy('seq')
             ->get();
 
-        $group = $this->groupBy($levels, 'log_date');
-        return $group;
+        return $levels->groupBy('log_date');
     }
 
-    public function getLevelLogData(int $logId)
+    /**
+     * 로그의 20일간의 습관 체크 상태 데이터
+     * @param int $logId
+     * @return Collection
+     */
+    public function getLevelLogData(int $logId): Collection
     {
-        $levelLogGroup = $this->selectLevelLogsGroupByDate($logId);
-        $levelLogData = [];
-        $today = now()->toDateString();
-        foreach ($levelLogGroup as $date => $logs) {
-            // 오늘 기준 이후 날짜는 다른 상태로 기록 -> 체크 불가
+        $levelLogGroup = collect($this->selectLevelLogsGroupByDate($logId));
+
+        $today = Date::today()->toDateString();
+
+        return $levelLogGroup->mapWithKeys(function (Collection $logs, string $date) use ($today) {
+            // 아직 오지 않은 날짜는 unchecked로 처리
             if ($date > $today) {
-                $levelLogData[$date]['status'] = 'unchecked';
-                continue;
+                return [$date => ['status' => 'unchecked']];
             }
 
-            $levels = [];
+            // maxLevel 계산
+            $maxLevel = $logs->where('is_checked', true)
+                ->pluck('level')
+                ->max() ?? 0;
 
-            foreach ($logs as $log) {
-                if ($log['is_checked']) {
-                    $levels[] = $log['level'];
-                }
-            }
-
-            $levelLogData[$date]['max_level'] = $levels ? max($levels) : null;
-        }
-        return $levelLogData;
+            return [$date => ['maxLevel' => $maxLevel]];
+        });
     }
 
     /**

@@ -9,11 +9,16 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Traits\Helper;
 use Illuminate\Support\Carbon;
+use App\Services\LogStatisticsService;
 
 class LogController extends Controller
 {
     use AuthorizesRequests;
     use Helper;
+
+    public function __construct(private LogStatisticsService $logStatisticsService)
+    {
+    }
 
     /**
      * 메인 log list + 통계
@@ -30,7 +35,6 @@ class LogController extends Controller
             return redirect()->route('home');
         }
 
-        // 1. user의 진행중인 습관 log 정보
         $user = auth()->user();
         $logs = new Log();
         $currentLogs = $logs->selectCurrentLogsForUser($user->id);
@@ -39,32 +43,18 @@ class LogController extends Controller
             ? $currentLogs->firstWhere('id', $log->id)
             : $currentLogs->first();
 
-        $habitLevel = null;
-        $levelLogData = null;
-        $habitLevelRankData = null;
-        $levelRankData = null;
-
         if ($selectedLog) {
-            // 1-1. habit_level 정보
-            $habitLevel = (new HabitLevel())->selectHabitLevelsGroupByLevel($selectedLog->habit_id);
-
-            // 1-2. 20일 정보(가장 높은 레벨, 일자 등)
-            $levelLogData = (new LevelLog())->getLevelLogData($selectedLog->id);
-
-            // 2. 통계 관련 정보
-            // 2-1. level, skip 백분율 / 20일 중 skip 하지 않은 비율
-
-            // 2-2. 체크한 habit_level 회수 및 내림 차순 정렬
-            $habitLevelRankData = (new LevelLog())->getHabitLevelRankData($selectedLog->id);
+            $statistics = $this->logStatisticsService->generateForLog($selectedLog);
         }
-
 
         return inertia('Log/Index', [
             'logs' => $currentLogs,
-            'habitLevel' => $habitLevel,
-            'levelLogData' => $levelLogData,
             'selectedLog' => $selectedLog,
-            'habitLevelRankData' => $habitLevelRankData,
+            // 서비스에서 받은 데이터를 분해하여 전달하거나, 객체 그대로 전달
+            'habitLevel' => $statistics?->habitLevel,
+            'levelLogData' => $statistics?->levelLogData,
+            'habitLevelRankData' => $statistics?->habitLevelRankData,
+            'levelRatioData' => $statistics?->levelRatioData,
         ]);
     }
 

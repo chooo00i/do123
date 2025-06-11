@@ -70,14 +70,14 @@
                                     {{ dayjs(date).format('MM/DD') }}</div>
                                 <button v-else @click="openModal(date)"
                                     :class="{
-                                        'bg-sky-200': list.max_level === 1,
-                                        'bg-sky-300': list.max_level === 2,
-                                        'bg-sky-400': list.max_level === 3,
-                                        'bg-sky-100': list.max_level === null,
+                                        'bg-sky-200': list.maxLevel === 1,
+                                        'bg-sky-300': list.maxLevel === 2,
+                                        'bg-sky-400': list.maxLevel === 3,
+                                        'bg-sky-100': list.maxLevel === 0,
                                     }"
                                     class="flex flex-col items-center justify-center rounded-full text-sm text-sky-800 hover:bg-sky-500 h-14 w-14 text-center font-semibold">
                                     <span class="text-[0.5rem] leading-[0.8]">{{ dayjs(date).format('MMDD') }}</span>
-                                    <span>{{ list.max_level ? 'Lv' + list.max_level : 'skip' }}</span>
+                                    <span>{{ list.maxLevel ? 'Lv' + list.maxLevel : 'skip' }}</span>
                                 </button>
                             </template>
                         </div>
@@ -88,7 +88,7 @@
                 </div>
                 <!-- 통계 -->
                 <div class="mt-7">
-                    <Level />
+                    <Level v-if="levelRatioData['dataList'][0]" :levelRatioData="levelRatioData" :selectedLog="selectedLog" />
                     <HabitLevel v-if="habitLevelRankData[0]" class="mt-7" :habitLevelRankData="habitLevelRankData" />
                 </div>
             </div>
@@ -112,12 +112,13 @@ import Edit from './Edit.vue'
 import Level from '@/Pages/Statistics/Level.vue'
 import HabitLevel from '@/Pages/Statistics/HabitLevel.vue'
 
-const { logs, habitLevel, levelLogData, selectedLog, habitLevelRankData } = defineProps({
+const { logs, habitLevel, levelLogData, selectedLog, habitLevelRankData, levelRatioData } = defineProps({
     logs: Object,
     habitLevel: Object,
     levelLogData: Object,
     selectedLog: Object,
     habitLevelRankData: Array,
+    levelRatioData: Object,
 })
 
 const showModal = ref(false)

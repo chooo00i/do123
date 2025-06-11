@@ -16,10 +16,10 @@
                             'bg-sky-400': data.level === 3,
                         }"></div>
                         <span class="w-16 font-medium">Level{{ data.level }}</span>
-                        <span class="md:w-48 w-30 break-all">{{ data.content }}</span>
+                        <span class="break-all">{{ data.content }}</span>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <span>{{ data.count }}회</span>
+                        <span class="w-10">{{ data.count }}회</span>
                         <span class="w-10 text-right">{{ data.percentage }}%</span>
                     </div>
                 </li>
@@ -31,18 +31,13 @@
 <script setup>
 import { computed } from 'vue'
 import { Bar } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
+import ChartDataLabels from 'chartjs-plugin-datalabels'
+import { LEVEL_COLOR_MAP } from '@/Utils/Constant'
 
 const { habitLevelRankData } = defineProps({
     habitLevelRankData: Array
 })
-
-const LEVEL_COLOR_MAP = {
-    1: { background: '#BAE6FD' },
-    2: { background: '#7DD3FC' },
-    3: { background: '#38BDF8' }
-};
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ChartDataLabels)
 const xData = computed(() => habitLevelRankData.map(item => item.content))
@@ -50,9 +45,9 @@ const yData = computed(() => habitLevelRankData.map(item => item.count))
 
 const backgroundColors = computed(() =>
     habitLevelRankData.map(item =>
-        LEVEL_COLOR_MAP[item.level].background
+        LEVEL_COLOR_MAP[item.level]
     )
-);
+)
 
 const chartData = computed(() => ({
     labels: xData.value,
@@ -64,7 +59,7 @@ const chartData = computed(() => ({
             data: yData.value,
         },
     ],
-}));
+}))
 
 const chartOptions = {
     responsive: true,
