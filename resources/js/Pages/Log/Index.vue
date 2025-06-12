@@ -109,16 +109,8 @@ import dayjs from 'dayjs'
 import axios from 'axios'
 import Modal from '@/Components/UI/Modal.vue'
 import Edit from './Edit.vue'
-// import Level from '@/Pages/Statistics/Level.vue'
-// import HabitLevel from '@/Pages/Statistics/HabitLevel.vue'
-import { defineAsyncComponent } from 'vue';
-
-const Level = defineAsyncComponent(() => 
-    import('@/Pages/Statistics/Level.vue')
-);
-const HabitLevel = defineAsyncComponent(() => 
-    import('@/Pages/Statistics/HabitLevel.vue')
-);
+import Level from '@/Pages/Statistics/Level.vue'
+import HabitLevel from '@/Pages/Statistics/HabitLevel.vue'
 
 
 const { logs, habitLevel, levelLogData, selectedLog, habitLevelRankData, levelRatioData } = defineProps({
