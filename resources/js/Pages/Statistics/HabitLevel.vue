@@ -5,7 +5,7 @@
             <Bar :data="chartData" :options="chartOptions" />
         </div>
         <div>
-            <ul class="grid md:grid-cols-2 md:p-6 pt-3">
+            <ul class="grid lg:grid-cols-2 md:p-6 pt-3">
                 <li v-for="(data, index) in habitLevelRankData" :key="index"
                     class="flex items-center justify-between content-sm mt-2 md:pr-3">
                     <div class="flex items-center">
