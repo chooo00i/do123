@@ -42,7 +42,8 @@ class LogController extends Controller
         $selectedLog = $log->id
             ? $currentLogs->firstWhere('id', $log->id)
             : $currentLogs->first();
-
+        
+        $statistics = null;
         if ($selectedLog) {
             $statistics = $this->logStatisticsService->generateForLog($selectedLog);
         }
@@ -50,7 +51,6 @@ class LogController extends Controller
         return inertia('Log/Index', [
             'logs' => $currentLogs,
             'selectedLog' => $selectedLog,
-            // 서비스에서 받은 데이터를 분해하여 전달하거나, 객체 그대로 전달
             'habitLevel' => $statistics?->habitLevel,
             'levelLogData' => $statistics?->levelLogData,
             'habitLevelRankData' => $statistics?->habitLevelRankData,
