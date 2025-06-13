@@ -157,10 +157,10 @@ const selectLog = (log) => {
 
 // 새 습관 이동
 const newHabit = () => {
-    // if (logs.length >= 3) {
-    //     alert('3개 이상 습관을 진행할 수 없습니다.')
-    //     return
-    // } 
+    if (logs.length >= 3) {
+        alert('3개 이상 습관을 진행할 수 없습니다.')
+        return
+    } 
     router.visit(route('habit.index'))
 }
 </script>

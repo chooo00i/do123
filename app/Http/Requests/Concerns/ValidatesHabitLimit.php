@@ -12,6 +12,7 @@ trait ValidatesHabitLimit
     {
         $validator->after(function ($validator) {
             $currentLogsCount = Log::where('creator_id', $this->user()->id)
+                ->whereDate('start_date', '<=', now())  
                 ->whereDate('end_date', '>=', now())
                 ->count();
 
