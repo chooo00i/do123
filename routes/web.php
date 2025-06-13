@@ -30,19 +30,18 @@ Route::middleware('auth')->group(function () {
     Route::get('log/history', [LogController::class, 'history'])->name('log.history');
     
     // Habit
-    Route::resource('habit', HabitController::class)->only(['index', 'create', 'store', 'update']);
+    Route::resource('habit', HabitController::class)->only(['index', 'create', 'store']);
     Route::get('habit/edit/{habit}/{log_id}', [HabitController::class, 'edit'])->name('habit.edit');
     Route::get('habit/copy/{habit}', [HabitController::class, 'copy'])->name('habit.copy');
-    Route::post('habit/{habit?}', [HabitController::class, 'store'])->name('habit.store');
+    Route::post('habit', [HabitController::class, 'store'])->name('habit.store');
+    Route::put('habit/{habit}', [HabitController::class, 'update'])->name('habit.update');
+    Route::post('/habit/{habit}/round', [HabitController::class, 'startNewRound'])->name('habit.startNewRound');
     
     // LevelLog
-    Route::patch('level-logs/batch-check', [LevelLogController::class, 'batchCheck'])->name('level_log.batch-check');
-    Route::get('level-logs/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_log.by_date');
+    Route::patch('level-log/batch-check', [LevelLogController::class, 'batchCheck'])->name('level_log.batch-check');
+    Route::get('level-log/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_log.by_date');
 
     // 마이페이지
     Route::get('user-account/{user}', [UserAccountController::class, 'edit'])->name('user-account.edit');
     Route::put('user-account', [UserAccountController::class, 'update'])->name('user-account.update');
-
-    // 통계
-    // Route::resource('statistics', StatisticsController::class)->only(['index', 'show']);
 });

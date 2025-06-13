@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Log extends Model
 {
     use SoftDeletes;
-    
+
     protected $guarded = [];
 
     public function habit()
@@ -35,10 +35,10 @@ class Log extends Model
             foreach ($levels as $habit_level_item) {
                 $models[] = new LevelLog([
                     'habit_level_id' => data_get($habit_level_item, 'id'),
-                    'content'        => data_get($habit_level_item, 'content'),
-                    'level'          => data_get($habit_level_item, 'level'),
-                    'seq'            => data_get($habit_level_item, 'seq'),
-                    'log_date'       => $today->copy()->addDays($i),
+                    'content' => data_get($habit_level_item, 'content'),
+                    'level' => data_get($habit_level_item, 'level'),
+                    'seq' => data_get($habit_level_item, 'seq'),
+                    'log_date' => $today->copy()->addDays($i),
                 ]);
             }
         }
@@ -50,11 +50,11 @@ class Log extends Model
      * log 저장 후 level_log 저장
      * @param array $data   1. habit
      *                      2. levels
-     * @return void
+     * @return int logId 저장한 로그 id
      */
-    public function addLogWithLevelLogs(array $data): void
+    public function addLogWithLevelLogs(array $data)
     {
-        // 1. Habit 저장
+        // 1. log 저장
         $habit = $data['habit'];
         $today = today();
         $log = new self;
@@ -64,11 +64,13 @@ class Log extends Model
         $log->habit_id = $habit->id;
         $log->start_date = $today;
         $log->end_date = $today->copy()->addDays(19);
-        $log->round = $this->checkLastRound($habit['id']) + 1;
+        $log->round = $this->checkLastRound($habit->id) + 1;
         $log->save();
 
-        // 2. HabitLevel 저장
+        // 2. levelLog 저장
         $log->addLevelLogs($data['levels'], $today);
+
+        return $log->id;
     }
 
     /**
@@ -84,7 +86,8 @@ class Log extends Model
         return $latestRound ?? 0;
     }
 
-    public function selectCurrentLogsForUser(int $userId) : object {
+    public function selectCurrentLogsForUser(int $userId): object
+    {
         $logs = Log::where('creator_id', $userId)
             ->whereDate('start_date', '<=', now())
             ->whereDate('end_date', '>=', now())

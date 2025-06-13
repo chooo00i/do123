@@ -56,14 +56,11 @@ const user = computed(() => page.props.user)
 const menus = computed(() => {
     if (!user.value) {
         return [
-            // { label: 'Overview' },
-            // { label: 'My Page', href: route('user-account.edit') },
             { label: 'Login', href: route('login') },
         ]
     }
 
     return [
-        // { label: 'Overview', href: route('statistics.index')},
         { label: 'My Page', href: route('user-account.edit', user.value.id) },
         { label: 'Logout', href: route('logout'), method: 'delete', as: 'button' },
     ]

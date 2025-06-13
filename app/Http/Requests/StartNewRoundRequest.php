@@ -2,16 +2,21 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Log;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Concerns\ValidatesHabitLimit;
 
-class HabitRequest extends FormRequest
+class StartNewRoundRequest extends FormRequest
 {
+    use ValidatesHabitLimit;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        $habit = $this->route('habit');
+        return $this->user()->can('update', $habit);
     }
 
     /**
@@ -21,12 +26,13 @@ class HabitRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        return $rules = [
             'title' => 'required|string|max:255',
             'emoji' => 'required|string|max:10',
             'levels' => 'required|array',
             'levels.*' => 'array|max:3',
             'levels.*.*.content' => 'required|string|max:255',
+            'removedHabitLevelIds' => 'present|array',
         ];
     }
 }

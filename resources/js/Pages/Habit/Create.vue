@@ -68,7 +68,6 @@ const { user, habit, habitLevels, type, logId } = defineProps({
     },
     habitLevels: {
         type: Object,
-        default: () => ({ 1: [{ id: null, content: '' }], 2: [{ id: null, content: '' }], 3: [{ id: null, content: '' }] })
     },
     type: {
         type: String,
@@ -78,15 +77,16 @@ const { user, habit, habitLevels, type, logId } = defineProps({
 });
 
 const form = useForm({
+    id: habit?.id ?? null,
     title: habit?.title ?? '',
     emoji: habit?.emoji ?? '🎬',
     isPublic: habit?.isPublic ?? false,
     levels: {
-        1: habitLevels?.[1] ?? [{ id: null, content: '' }],
-        2: habitLevels?.[2] ?? [{ id: null, content: '' }],
-        3: habitLevels?.[3] ?? [{ id: null, content: '' }]
+        1: habitLevels?.[1] ?? [{ id: null, content: '', level: 1, seq: 1, }],
+        2: habitLevels?.[2] ?? [{ id: null, content: '', level: 2, seq: 1, }],
+        3: habitLevels?.[3] ?? [{ id: null, content: '', level: 3, seq: 1, }]
     },
-    removedLevelIds: [],
+    removedHabitLevelIds: [],
     logId: logId,
     type: type,
 })
@@ -100,7 +100,7 @@ function removeInput(level) {
     if (form.levels[level].length > 1) {
         const removed = form.levels[level].pop()
         if (removed && typeof removed === 'object' && removed.id) {
-            form.removedLevelIds.push(removed.id)
+            form.removedHabitLevelIds.push(removed.id)
         }
     }
 }
@@ -128,12 +128,14 @@ const save = () => {
     }
 
     if (type === 'edit') {
-        if (confirm('이전 회차 기록은 수정되지 않습니다. 수정하시겠습니까?')) {
+        if (confirm('수정하시겠습니까?')) {
             form.put(route('habit.update', habit.id))
         }
     } else {
-        if (type === 'newRound') form.post(route('habit.store', habit.id))
-        else form.post(route('habit.store'))
+        if (confirm('저장하시겠습니까?')) {
+            if (type === 'newRound') form.post(route('habit.startNewRound', habit.id))
+            else form.post(route('habit.store'))
+        }
     }
 }
 
@@ -141,5 +143,5 @@ const stop = () => {
     if (confirm('중지하시겠습니까?')) {
         router.delete(route('log.destroy', logId))
     }
-};
+}
 </script>

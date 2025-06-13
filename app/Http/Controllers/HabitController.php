@@ -5,14 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Habit;
 use App\Models\HabitLevel;
 use App\Models\Log;
-use Illuminate\Http\Request;
-use App\Http\Requests\HabitRequest;
+use App\Services\HabitService;
+use App\Http\Requests\HabitStoreRequest;
+use App\Http\Requests\HabitUpdateRequest;
+use App\Http\Requests\StartNewRoundRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class HabitController extends Controller
 {
     use AuthorizesRequests;
-    
+
+    protected $habitService;
+
+    public function __construct(HabitService $habitService)
+    {
+        $this->habitService = $habitService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -49,42 +58,20 @@ class HabitController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(HabitRequest $request, ?Habit $habit)
+    public function store(HabitStoreRequest $request)
     {
         try {
-            // Habit/Habit_level 저장
+            // 새로운 습관 저장
             $user = auth()->user();
-            $isAdmin = $user->is_admin;
-
-            // 진행중인 습관 최대 3개 제한
-            $logs = new Log();
-            $currentLogs = $logs->selectCurrentLogsForUser($user->id);
-            if ($currentLogs->count() >= 3) {
-                return redirect()->route('home')->with('error', '3개 이상 습관을 진행할 수 없습니다.');
-            }
-
-            $habitModel = new Habit();
-            // 새로운 회차 시작: habit, habit_levels 수정 후 logs, level_logs 생성
-            if ($request['type'] == 'newRound') {
-                $habitModel->startNewRound($request, $habit);
-                // 성공 응답
-                return redirect()->route('home')->with('success', '새로운 회차 시작!');
-            } else {
-                // 새 habits, habit_levels, logs, level_logs 한번에 초기 생성
-                $habitData = $habitModel->createWithLevelsAndLogs([
-                    'title' => $request['title'],
-                    'emoji' => $request['emoji'],
-                    'creator_id' => $user['id'],
-                    'is_template' => $isAdmin,
-                    'is_public' => $request['isPublic'] ?? false,
-                    'levels' => $request['levels'],
-                ]);
-                // 성공 응답
-                return redirect()->route('home')->with('success', '습관 만들기 완료!');
-            }
+            $request->merge(['creator_id' => $user->id, 'is_template' => $user->is_admin]);
+            $result = $this->habitService->createHabitWithDetails($request);
+            // 성공 응답
+            return redirect()
+                ->route('home', $result['logId'])
+                ->with('success', '습관 만들기 완료!');
         } catch (\Exception $e) {
             // 실패 응답
-            return redirect()->back()->with('error', '저장 실패' . $e);
+            return redirect()->back()->with('error', '저장 실패');
         }
     }
 
@@ -121,18 +108,9 @@ class HabitController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(HabitRequest $request, Habit $habit)
+    public function update(HabitUpdateRequest $request, Habit $habit)
     {
-        // habits, habit_levels, logs, level_logs 한번에 업데이트
-        $habit->updateWithLevelsAndLogs([
-            'title' => $request['title'],
-            'emoji' => $request['emoji'],
-            'is_public' => $request['isPublic'] ?? false,
-            'levels' => $request['levels'],
-            'removedLevelIds' => $request['removedLevelIds'],
-            'logId' => $request['logId'],
-        ], $habit);
-
+        $this->habitService->updateHabitWithDetails($request, $habit);
         return redirect()->route('home', $request['logId'])->with('success', '습관 수정 완료!');
     }
 
@@ -166,5 +144,26 @@ class HabitController extends Controller
                 'type' => $habit->is_template ? 'copy' : 'newRound', // 템플릿 복사 혹은 새로운 회차 시작
             ]
         );
+    }
+
+    /**
+     * 새 회차 시작
+     * @param \App\Http\Requests\StartNewRoundRequest $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function startNewRound(StartNewRoundRequest $request, Habit $habit)
+    {
+        try {
+            $user = auth()->user();
+            $request->merge(['creator_id' => $user->id]);
+            $result = $this->habitService->startNewRound($request, $habit);
+            // 성공 응답
+            return redirect()
+                ->route('home', $result['logId'])
+                ->with('success', '새로운 회차 시작!');
+        } catch (\Throwable $th) {
+            // 실패 응답
+            return redirect()->back()->with('error', '저장 실패');
+        }
     }
 }
