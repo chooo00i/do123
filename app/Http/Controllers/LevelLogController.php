@@ -79,31 +79,37 @@ class LevelLogController extends Controller
     }
 
     /**
-     * 로그 체크 업데이트
+     * 로그 체크 업데이트 후 이전 페이지 리다이렉트
      * @param \Illuminate\Http\Request $request
      * @return void
      */
-    public function check(Request $request)
+    public function batchCheck(Request $request)
     {
-        $data = $request->all();
+        $validated = $request->validate([
+            '*.id' => ['required', 'integer', 'exists:level_logs,id'],
+            '*.is_checked' => ['required', 'boolean'],
+        ]);
+
         $toCheck = [];
         $toUncheck = [];
 
-        foreach ($data as $id => $isChecked) {
-            if ($isChecked) {
-                $toCheck[] = $id;
+        foreach ($validated as $item) {
+            if ($item['is_checked']) {
+                $toCheck[] = $item['id'];
             } else {
-                $toUncheck[] = $id;
+                $toUncheck[] = $item['id'];
             }
         }
 
-        if (!empty($toCheck)) {
-            LevelLog::whereIn('id', $toCheck)->update(['is_checked' => true]);
-        }
+        DB::transaction(function () use ($toCheck, $toUncheck) {
+            if (!empty($toCheck)) {
+                LevelLog::whereIn('id', $toCheck)->update(['is_checked' => true]);
+            }
 
-        if (!empty($toUncheck)) {
-            LevelLog::whereIn('id', $toUncheck)->update(['is_checked' => false]);
-        }
+            if (!empty($toUncheck)) {
+                LevelLog::whereIn('id', $toUncheck)->update(['is_checked' => false]);
+            }
+        });
 
         return redirect()->back();
     }

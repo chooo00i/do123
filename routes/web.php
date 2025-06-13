@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('habit/{habit?}', [HabitController::class, 'store'])->name('habit.store');
     
     // LevelLog
-    Route::patch('level-logs/check', [LevelLogController::class, 'check'])->name('level_log.check');
+    Route::patch('level-logs/batch-check', [LevelLogController::class, 'batchCheck'])->name('level_log.batch-check');
     Route::get('level-logs/{log_id}/{date}', [LevelLogController::class, 'byDate'])->name('level_log.by_date');
 
     // 마이페이지
