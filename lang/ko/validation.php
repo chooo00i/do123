@@ -152,4 +152,10 @@ return [
     'uppercase'              => ':attribute은 대문자여야 합니다.',
     'url'                    => ':attribute은(는) 형식은 올바르지 않습니다.',
     'uuid'                   => ':attribute은(는) 유효한UUID여야합니다.',
+    'attributes' => [
+        'name' => '이름',
+        'email' => '이메일',
+        'password' => '비밀번호',
+        'password_confirmation' => '비밀번호 확인',
+    ],
 ];

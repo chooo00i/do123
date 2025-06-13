@@ -17,9 +17,9 @@ class UserAccountController extends Controller
     public function store(Request $request)
     {
         $user = User::create($request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed' // password_confirmation까지 유효성 검사
+            'name' => 'required|max:20',
+            'email' => 'required|email|max:30|unique:users',
+            'password' => 'required|min:8|max:20|confirmed' // password_confirmation까지 유효성 검사
         ]));
 
         // 계정 생성 후 로그인 페이지로 이동
@@ -37,9 +37,9 @@ class UserAccountController extends Controller
     public function update(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,' . $request->id, // 원래 이메일은 유니크에서 제외
-            'password' => 'required|min:8|confirmed'
+            'name' => 'required|max:20',
+            'email' => 'required|email|max:30|unique:users,email,' . $request->id, // 원래 이메일은 유니크에서 제외
+            'password' => 'required|min:8|max:20|confirmed'
         ]);
 
         $user = User::find($request->id);
